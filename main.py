@@ -23,6 +23,7 @@ OUTPUT_FORMAT_STRING = cfg['OUTPUT_FORMAT_STRING']
 MAKEWINSAFE = cfg['MAKEWINSAFE']
 OUTPUT_DIR_ROOT = cfg['OUTPUT_DIR_ROOT']
 SEARCH_DIR = cfg['SEARCH_DIR']
+AUTODELETE = cfg['AUTODELETE']
 
 rn = Renamer(OUTPUT_FORMAT_STRING=OUTPUT_FORMAT_STRING)
 
@@ -36,8 +37,10 @@ def test(testfile):
             except: print(Exception)
             if new_filename:
                 output.append('         {:<60}   ->   {}\n'.format(orig_filename[:55],os.path.basename(new_filename)))
+                print('         {:<60}   ->   {}'.format(orig_filename[:55],os.path.basename(new_filename)))
             else:
                 output.append('[x]      {:<60}   ->   Shit happened.\n'.format(orig_filename[:55]))
+                print('[x]      {:<60}   ->   Shit happened.'.format(orig_filename[:55]))
     return output
 
 def ensure_dir(file_path):
@@ -49,25 +52,34 @@ def recursive_dir_scan(search_dir, output):
     for entry in os.scandir(search_dir):
         if entry.is_dir():
             recursive_dir_scan(entry, output)
-            os.rmdir(entry.path)
+            # os.rmdir(entry.path)
         if entry.is_file():
             orig_filename = entry.name
             new_rel_path = rn.get_relative_pathname(orig_filename)
             if new_rel_path:
                 new_abs_path = os.path.join(OUTPUT_DIR_ROOT, new_rel_path)
                 output.append('         {:<60}   ->   {}\n'.format(orig_filename[:55],new_abs_path))
-                print('{:<60}   ->   {}'.format(orig_filename[:55],new_rel_path))
+                print('         {:<60}   ->   {}'.format(orig_filename[:55],new_rel_path))
                 ensure_dir(new_abs_path)
                 shutil.move(entry.path,new_abs_path)
             else:
-                output.append('[x]      {:<60}   ->   Deleted.\n'.format(entry.name))
-                os.remove(entry.path)
+                if AUTODELETE:
+                    try:
+                        os.remove(entry.path)
+                        output.append('[x]      {:<60}   ->   Deleted.\n'.format(entry.name))
+                        print('[x]      {:<60}   ->   Deleted.'.format(entry.name))
+                    except: 
+                        output.append('[x]      {:<60}   ->   Could not delete.\n'.format(entry.name))
+                        print('[x]      {:<60}   ->   Could not delete.'.format(entry.name))
+                else:
+                    output.append('[x]      {:<60}   ->   Unchanged.\n'.format(entry.name))
+                    print('[x]      {:<60}   ->   Unchanged.'.format(entry.name))
     return output
 
-# output = []
-# recursive_dir_scan(SEARCH_DIR, output)
+output = []
+recursive_dir_scan(SEARCH_DIR, output)
 
-output = test('testfile.txt',)
+# output = test('testfile.txt',)
 
 # test output
 with open('outputfile.txt', 'w+') as output_file:

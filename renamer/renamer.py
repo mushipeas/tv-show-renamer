@@ -24,7 +24,7 @@ class Renamer:
         self.prog = re.compile(pattern, re.IGNORECASE)
         self.t = tvdb_api.Tvdb()
 
-    def get_regex_tv_info(self, video_filename: str):
+    def _get_regex_tv_info(self, video_filename: str):
         match = self.prog.match(video_filename)
 
         output = Cobjs.Episode(
@@ -41,14 +41,7 @@ class Renamer:
 
         return output
 
-    def get_episode_title(self, show_id,season_no,episode_no):
-        try:
-            ep = self.t[show_id][int(season_no)][int(episode_no)]
-            return ep['episodename']
-        except:
-            raise
-
-    def search_show_name(self, show_title: str, year: str=' '):
+    def search_series_name(self, show_title: str, year: str=' '):
         try:
             search_term = show_title + year
             search_res = self.t.search(search_term)
@@ -57,7 +50,7 @@ class Renamer:
                 search_term = show_title
                 search_res = self.t.search(show_title)
             except:
-                print('Show name search returned zero results for {}.'.format(search_term))
+                print('Err     Show-name search returned zero results for {}.'.format(search_term))
                 raise
 
         result_list = []
@@ -75,16 +68,23 @@ class Renamer:
 
         return sorted(result_list, key=lambda x: x.search_difference)
 
-    def best_match_show(self, show_title: str, year: str=' '):
-        search_results = self.search_show_name(show_title, year)
+    def _best_match_show(self, show_title: str, year: str=' '):
+        search_results = self.search_series_name(show_title, year)
         if search_results:
             for result in search_results:
                 if self.t[result.id].data['seriesName']:
                     return result
         return None
 
-    def get_show_info(self, regex_data):
-        best_match = self.best_match_show(regex_data.text_show_title, regex_data.show_year)
+    def get_episode_title(self, show_id,season_no,episode_no):
+        try:
+            ep = self.t[show_id][int(season_no)][int(episode_no)]
+            return ep['episodename']
+        except:
+            raise
+
+    def get_ep_tvdb_info(self, regex_data):
+        best_match = self._best_match_show(regex_data.text_show_title, regex_data.show_year)
         episode_title = self.get_episode_title(best_match.id,regex_data.season_no,regex_data.episode_no)
 
         return Cobjs.Episode(
@@ -121,19 +121,18 @@ class Renamer:
         return safe_filename
 
     def get_relative_pathname(self, orig_filename: str):
-        regex_data = self.get_regex_tv_info(orig_filename)
+        regex_data = self._get_regex_tv_info(orig_filename)
         if regex_data:
             try:
-                tvdb_ep_data = self.get_show_info(regex_data)
+                tvdb_ep_data = self.get_ep_tvdb_info(regex_data)
                 show_dir = tvdb_ep_data.tvdb_show_title
                 season_dir = self.season_format.format(int(tvdb_ep_data.season_no))
                 new_filename = self.get_new_filename(tvdb_ep_data)
                 return os.path.join(show_dir,season_dir,new_filename)
             except:
-                print('Show-name TVDB search returned zero results for "{:}" from : {:}'.format(regex_data.text_show_title,regex_data.original_file_name))
-                raise
+                print('Err      Show-name TVDB search returned zero results for "{}" from : {}'.format(regex_data.text_show_title,regex_data.original_file_name))
+                return None
         else:
-            print('Filename cannot be parsed into individual episode for "{:}"!'.format(orig_filename))
+            print('Err      Filename cannot be parsed for "{}"!'.format(orig_filename))
+            #add ability to manually select show and episodes?
             return None
-
-
