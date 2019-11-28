@@ -1,0 +1,5 @@
+.venv/*
+env/*
+config.json
+.vscode/*
+comments/*
