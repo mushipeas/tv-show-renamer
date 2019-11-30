@@ -24,8 +24,12 @@ MAKEWINSAFE = cfg['MAKEWINSAFE']
 OUTPUT_DIR_ROOT = cfg['OUTPUT_DIR_ROOT']
 SEARCH_DIR = cfg['SEARCH_DIR']
 AUTODELETE = cfg['AUTODELETE']
+DRYRUN = cfg['DRYRUN']
 
-rn = Renamer(OUTPUT_FORMAT_STRING=OUTPUT_FORMAT_STRING)
+if DRYRUN: AUTODELETE = False
+
+
+rn = Renamer(OUTPUT_FORMAT_STRING=OUTPUT_FORMAT_STRING, MAKEWINSAFE=MAKEWINSAFE)
 
 # test using testfile.txt
 def test(testfile):
@@ -49,31 +53,40 @@ def ensure_dir(file_path):
         os.makedirs(directory)
 
 def recursive_dir_scan(search_dir, output):
-    for entry in os.scandir(search_dir):
-        if entry.is_dir():
-            recursive_dir_scan(entry, output)
-            # os.rmdir(entry.path)
-        if entry.is_file():
-            orig_filename = entry.name
-            new_rel_path = rn.get_relative_pathname(orig_filename)
-            if new_rel_path:
-                new_abs_path = os.path.join(OUTPUT_DIR_ROOT, new_rel_path)
-                output.append('         {:<60}   ->   {}\n'.format(orig_filename[:55],new_abs_path))
-                print('         {:<60}   ->   {}'.format(orig_filename[:55],new_rel_path))
-                ensure_dir(new_abs_path)
-                shutil.move(entry.path,new_abs_path)
-            else:
+    with os.scandir(search_dir) as it:
+        for entry in it:
+            if entry.is_dir():
+                recursive_dir_scan(entry, output)
                 if AUTODELETE:
                     try:
-                        os.remove(entry.path)
+                        os.rmdir(entry.path)
                         output.append('[x]      {:<60}   ->   Deleted.\n'.format(entry.name))
                         print('[x]      {:<60}   ->   Deleted.'.format(entry.name))
-                    except: 
+                    except:
                         output.append('[x]      {:<60}   ->   Could not delete.\n'.format(entry.name))
                         print('[x]      {:<60}   ->   Could not delete.'.format(entry.name))
+            if entry.is_file():
+                orig_filename = entry.name
+                new_rel_path = rn.get_relative_pathname(orig_filename)
+                if new_rel_path:
+                    new_abs_path = os.path.join(OUTPUT_DIR_ROOT, new_rel_path)
+                    output.append('         {:<60}   ->   {}\n'.format(orig_filename[:55],new_abs_path))
+                    print('         {:<60}   ->   {}'.format(orig_filename[:55],new_rel_path))
+                    if not DRYRUN:
+                        ensure_dir(new_abs_path)
+                        shutil.move(entry.path,new_abs_path)
                 else:
-                    output.append('[x]      {:<60}   ->   Unchanged.\n'.format(entry.name))
-                    print('[x]      {:<60}   ->   Unchanged.'.format(entry.name))
+                    if AUTODELETE:
+                        try:
+                            os.remove(entry.path)
+                            output.append('[x]      {:<60}   ->   Deleted.\n'.format(entry.name))
+                            print('[x]      {:<60}   ->   Deleted.'.format(entry.name))
+                        except: 
+                            output.append('[x]      {:<60}   ->   Could not delete.\n'.format(entry.name))
+                            print('[x]      {:<60}   ->   Could not delete.'.format(entry.name))
+                    else:
+                        output.append('[x]      {:<60}   ->   Unchanged.\n'.format(entry.name))
+                        print('[x]      {:<60}   ->   Unchanged.'.format(entry.name))
     return output
 
 output = []

@@ -3,24 +3,26 @@ import os
 import tvdb_api
 import difflib
 from .custom_objs import Cobjs
+from .constants import Defaults
 
 # pattern = r'(^[\w\._\-\s]+)(?:[\._\-\s]*)([(\d)]*)(?:[\._\-\s]*?[\w]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|m4v|srt|$)'
 # pattern = r'(^[\w\._\-\s]+)(?:[\._\-\s(]*?)(\d*)[)]*?(?:[\._\-\s]*?[\w]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|srt$)'
 # pattern = r'(^[\w\._\-\s]+?)(?:[\._\-\s(]*?)(\d*)[)]*?(?:[\._\-\s]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|srt$)'
 # pattern = r'(^[\w\._\-\s]+?)(?:[\._\-\s(]*?)(\d{4})*[)]*?(?:[\._\-\s]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|srt$)'
 # pattern = r'(^[\w\._\-\s&!\')(]+?)(?:[\._\-\s(]*?)(\d{4})*[)]*?(?:[\._\-\s]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|m4v|webm|divx|idx|srt$)'
-pattern = r'(^[\w\._\-\s&!\')(]+?)(?:[\._\-\s(]*?)(\d{4})*[)]*?(?:[\._\-\s]*?)[\._\-\ss](\d{1,2})[x\._\-\s]*[e|(ep)|x](\d{1,2})[^\-\d](?:.*)\.(mp4|avi|mkv|divx|idx|srt$)'
 
+#  . └─ ├ ├ ├ ├   for tree struc
 
 class Renamer:
     def __init__(self,
-                OUTPUT_FORMAT_STRING,
-                pattern=pattern,
-                MAKEWINSAFE=True
+                OUTPUT_FORMAT_STRING=Defaults.OUTPUT_FORMAT_STRING,
+                pattern=Defaults.pattern,
+                season_dir_format=Defaults.season_dir_format,
+                MAKEWINSAFE=False
                 ):
         self.MAKEWINSAFE = MAKEWINSAFE
         self.OUTPUT_FORMAT_STRING = OUTPUT_FORMAT_STRING
-        self.season_format = 'Season {:02d}'
+        self.season_dir_format = season_dir_format
         self.prog = re.compile(pattern, re.IGNORECASE)
         self.t = tvdb_api.Tvdb()
 
@@ -56,7 +58,7 @@ class Renamer:
         result_list = []
         
         # print('For search term: {}'.format(search_term))
-        for index, item in enumerate(search_res):
+        for item in search_res:
             diff = [li for li in difflib.ndiff(search_term.lower(), item['seriesName'].lower()) if li[0] != ' ']
             # print('[{}] Returned: "{}" with [{} diff].'.format(index, item['seriesName'],len(diff)))
             result_list.append(Cobjs.SearchResult(
@@ -125,8 +127,8 @@ class Renamer:
         if regex_data:
             try:
                 tvdb_ep_data = self.get_ep_tvdb_info(regex_data)
-                show_dir = tvdb_ep_data.tvdb_show_title
-                season_dir = self.season_format.format(int(tvdb_ep_data.season_no))
+                show_dir = self.make_winsafe(tvdb_ep_data.tvdb_show_title)
+                season_dir = self.season_dir_format.format(int(tvdb_ep_data.season_no))
                 new_filename = self.get_new_filename(tvdb_ep_data)
                 return os.path.join(show_dir,season_dir,new_filename)
             except:
