@@ -1,0 +1,8 @@
+{
+    "SEARCH_DIR" : "/temp_dl/TV Shows/",
+    "OUTPUT_DIR_ROOT" : "media/TV Shows/",
+    "OUTPUT_FORMAT_STRING" : "{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}",
+    "MAKEWINSAFE" : true,
+    "AUTODELETE" : false,
+    "DRYRUN" : true
+}

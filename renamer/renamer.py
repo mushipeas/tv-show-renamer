@@ -3,28 +3,21 @@ import os
 import tvdb_api
 import difflib
 from .custom_objs import Cobjs
-from .constants import Defaults
-
-# pattern = r'(^[\w\._\-\s]+)(?:[\._\-\s]*)([(\d)]*)(?:[\._\-\s]*?[\w]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|m4v|srt|$)'
-# pattern = r'(^[\w\._\-\s]+)(?:[\._\-\s(]*?)(\d*)[)]*?(?:[\._\-\s]*?[\w]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|srt$)'
-# pattern = r'(^[\w\._\-\s]+?)(?:[\._\-\s(]*?)(\d*)[)]*?(?:[\._\-\s]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|srt$)'
-# pattern = r'(^[\w\._\-\s]+?)(?:[\._\-\s(]*?)(\d{4})*[)]*?(?:[\._\-\s]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|srt$)'
-# pattern = r'(^[\w\._\-\s&!\')(]+?)(?:[\._\-\s(]*?)(\d{4})*[)]*?(?:[\._\-\s]*?)[\._\-\s][s](\d{1,2})[\._\-\s]*[e|(ep)](\d{1,2})(?:.*)\.(mp4|avi|mkv|m4v|webm|divx|idx|srt$)'
 
 #  . └─ ├ ├ ├ ├   for tree struc
 
 class Renamer:
     def __init__(self,
-                OUTPUT_FORMAT_STRING=Defaults.OUTPUT_FORMAT_STRING,
-                pattern=Defaults.pattern,
-                season_dir_format=Defaults.season_dir_format,
+                OUTPUT_FORMAT_STRING,
+                PATTERN,
+                SEASON_DIR_FORMAT,
                 MAKEWINSAFE=False
                 ):
         self.MAKEWINSAFE = MAKEWINSAFE
         self.OUTPUT_FORMAT_STRING = OUTPUT_FORMAT_STRING
-        self.season_dir_format = season_dir_format
+        self.SEASON_DIR_FORMAT = SEASON_DIR_FORMAT
         
-        self.prog = re.compile(pattern, re.IGNORECASE)
+        self.prog = re.compile(PATTERN, re.IGNORECASE)
         self.t = tvdb_api.Tvdb()
 
     def _get_regex_tv_info(self, video_filename: str):
@@ -32,16 +25,16 @@ class Renamer:
 
         output = {
             'original_file_name' : match.string,
-            'regex_show_title' : match.group(1).replace('.',' '),
-            'regex_show_year' : match.group(2),
-            'regex_season_no' : int(match.group(3)),
-            'regex_episode_no' : int(match.group(4)),
-            'regex_extension' : match.string.split('.')[-1]
+            'show_title' : match.group(1).replace('.',' '),
+            'show_year' : match.group(2),
+            'season_no' : int(match.group(3)),
+            'episode_no' : int(match.group(4)),
+            'extension' : match.string.split('.')[-1]
          } if match else None
 
         return output
 
-    def search_series_name(self, show_title: str, year: str=' '):
+    def search_series_name(self, show_title: str, year: str=' ') -> list:
         try:
             search_term = show_title + year
             search_res = self.t.search(search_term)
@@ -66,40 +59,40 @@ class Renamer:
 
         return sorted(result_list, key=lambda x: x.search_difference)
 
-    def _best_match_show(self, show_title: str, year: str=' '):
+    def _best_match_series(self, show_title: str, year: str=' ') -> 'TVDB Show obj':
         search_results = self.search_series_name(show_title, year)
         if search_results:
             for result in search_results:
-                if self.t[result.id].data['seriesName']:
-                    return result
+                if self.t[result.id].data['seriesName']: # ensure a real show (not garbage) is being autoselected
+                    return self.t[result.id]
         return None
 
-    def get_episode_data(self, show_id,season_no,episode_no):
+    def get_episode_data(self, show_id,season_no,episode_no) -> 'TVDB Episode obj':
         try:
             ep = self.t[show_id][season_no][episode_no]
             return ep
         except:
             raise
 
-    def get_ep_tvdb_info(self, regex_data):
-        best_match = self._best_match_show(regex_data['regex_show_title'], regex_data['regex_show_year'])
-        tvdb_episode = self.get_episode_data(best_match.id,regex_data['regex_season_no'],regex_data['regex_episode_no'])
+    def get_ep_tvdb_info(self, regex_data: dict) -> 'TVDB Show obj, Episode obj': 
+        bm_tvdb_series = self._best_match_series(regex_data['show_title'], regex_data['show_year'])
+        tvdb_episode = self.get_episode_data(bm_tvdb_series.data['id'],regex_data['season_no'],regex_data['episode_no'])
 
-        return {
-            'tvdb_id' : best_match.id,
-            'tvdb_show_title' : best_match.show_title,
-            'tvdb_episode_title' : tvdb_episode['episodename'],
-        }
+        return bm_tvdb_series, tvdb_episode
 
-    def format_filename(self, show_title: str, s_no: int, ep_no: int, ep_name: str, ext: str, format_str: str):
-        return format_str.format(show_title, s_no, ep_no, ep_name, ext)
+    def format_filename(self, series_title: str, s_no: int, ep_no: int, ep_name: str, ext: str, format_str: str):
+        return format_str.format(series_title=series_title,
+                                s_no=s_no,
+                                ep_no=ep_no,
+                                ep_name=ep_name,
+                                ext=ext)
 
-    def get_new_filename(self, regex_data, tvdb_ep_data):
-        new_filename = self.format_filename(tvdb_ep_data['tvdb_show_title'],
-                                            regex_data['regex_season_no'],
-                                            regex_data['regex_episode_no'],
-                                            tvdb_ep_data['tvdb_episode_title'],
-                                            regex_data['regex_extension'],
+    def get_new_filename(self, tvdb_series, tvdb_episode, extension):
+        new_filename = self.format_filename(tvdb_series.data['seriesName'],
+                                            tvdb_episode['airedSeason'],
+                                            tvdb_episode['airedEpisodeNumber'],
+                                            tvdb_episode['episodeName'],
+                                            extension,
                                             self.OUTPUT_FORMAT_STRING
                                             )
         if self.MAKEWINSAFE:
@@ -122,14 +115,14 @@ class Renamer:
         regex_data = self._get_regex_tv_info(orig_filename)
         if regex_data:
             try:
-                tvdb_ep_data = self.get_ep_tvdb_info(regex_data)
-                show_dir = self.make_winsafe(tvdb_ep_data['tvdb_show_title'])
-                season_dir = self.season_dir_format.format(regex_data['regex_season_no'])
-                new_filename = self.get_new_filename(regex_data, tvdb_ep_data)
+                bm_tvdb_series, tvdb_episode = self.get_ep_tvdb_info(regex_data)
+                show_dir = self.make_winsafe(bm_tvdb_series.data['seriesName'])
+                season_dir = self.SEASON_DIR_FORMAT.format(tvdb_episode['airedSeason'])
+                new_filename = self.get_new_filename(bm_tvdb_series, tvdb_episode, regex_data['extension'])
                 return os.path.join(show_dir,season_dir,new_filename)
             except:
-                print('Err      Show-name TVDB search returned zero results for "{}" from : {}'.format(regex_data['regex_show_title'],regex_data['original_file_name']))
-                raise
+                print('Err      Show-name TVDB search returned zero results for "{}" from : {}'.format(regex_data['show_title'],regex_data['original_file_name']))
+                return None
         else:
             print('Err      Filename cannot be parsed for "{}"!'.format(orig_filename))
             #add ability to manually select show and season / episode number?

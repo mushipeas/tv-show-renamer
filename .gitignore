@@ -1,5 +1,8 @@
 .venv/*
 env/*
-config.json
+.config.json
 .vscode/*
 comments/*
+outputfile.*
+testapi.py
+testmodule.py
