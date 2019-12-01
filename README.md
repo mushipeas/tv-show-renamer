@@ -57,14 +57,19 @@ If `"AUTODELETE"` is true, any file that is not matched for renaming will be del
 
 `"OUTPUT_FORMAT_STRING"` has the following keywords:
     
-    series_title = The title of the series as given by TVDB
-    s_no = Season number, as integer
-    ep_no = Episode number, as integer
-    ep_name = The name of the episode as given by TVDB
-    ext = filename extension. Probably leave this as it is
+-  `series_title` = The title of the series as given by TVDB
+-  `s_no` = Season number, as integer
+-  `ep_no` = Episode number, as integer
+-  `ep_name` = The name of the episode as given by TVDB
+-  `ext` = filename extension. Probably leave this as it is
 
 The string follows the Python String Format Spec. Mini Language, as given by:
 https://docs.python.org/3.4/library/string.html#formatspec
+
+Default `OUTPUT_FORMAT_STRING`:
+`"{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}"`
+Which gives:
+`Series Title - SXXEXX - Episode Title.ext`
 
 ### Running the script
 
