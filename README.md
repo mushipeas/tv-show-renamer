@@ -7,6 +7,7 @@ Does a better job of finding the right show by default than most.
 tvdb.com: [http://thetvdb.com][tvdb]
 tvdb_api: [https://github.com/dbr/tvdb_api][tvdb_api Github]
 
+Written for and tested on Python 3.7.5
 
 ## To Initialise the Project
 
@@ -26,11 +27,11 @@ This should create a virtual environment
 ## Useage
 
 ### Config.json:
-config.json must be places in the root dir with `main.py`.
+`config.json` must be placed in the root dir with `main.py`.
 The search directory `"SEARCH_DIR"` must be specified in the config.
 If the output directory `"OUTPUT_DIR_ROOT"` is not specified, it will default to the same as the search directory.
 
-Config.json minimum requirements:
+`Config.json` minimum requirements:
 
     {
         "APIKEY" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -53,6 +54,17 @@ This needs to be turned off by specifying `"DRYRUN" : false` in the config.
     }
 
 If `"AUTODELETE"` is true, any file that is not matched for renaming will be deleted. Be careful with this! Additional functionality to only delete files with certain extensions needs to be added in the future. (Though it would be trivial if you wanted to modify the code)
+
+`"OUTPUT_FORMAT_STRING"` has the following keywords:
+    
+    series_title = The title of the series as given by TVDB
+    s_no = Season number, as integer
+    ep_no = Episode number, as integer
+    ep_name = The name of the episode as given by TVDB
+    ext = filename extension. Probably leave this as it is
+
+The string follows the Python String Format Spec. Mini Language, as given by:
+https://docs.python.org/3.4/library/string.html#formatspec
 
 ### Running the script
 

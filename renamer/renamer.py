@@ -2,6 +2,7 @@ import re
 import os
 import tvdb_api
 import difflib
+from functools import lru_cache
 from .custom_objs import Cobjs
 
 #  . └─ ├ ├ ├ ├   for tree struc
@@ -60,6 +61,7 @@ class Renamer:
 
         return sorted(result_list, key=lambda x: x.search_difference)
 
+    @lru_cache(maxsize=128)
     def _best_match_series(self, show_title: str, year: str=' ') -> 'TVDB Show obj':
         search_results = self.search_series_name(show_title, year)
         if search_results:
@@ -68,16 +70,9 @@ class Renamer:
                     return self.t[result.id]
         return None
 
-    def get_episode_data(self, show_id,season_no,episode_no) -> 'TVDB Episode obj':
-        try:
-            ep = self.t[show_id][season_no][episode_no]
-            return ep
-        except:
-            raise
-
     def get_ep_tvdb_info(self, regex_data: dict) -> 'TVDB Show obj, Episode obj': 
         bm_tvdb_series = self._best_match_series(regex_data['show_title'], regex_data['show_year'])
-        tvdb_episode = self.get_episode_data(bm_tvdb_series.data['id'],regex_data['season_no'],regex_data['episode_no'])
+        tvdb_episode = bm_tvdb_series[regex_data['season_no']][regex_data['episode_no']]
 
         return bm_tvdb_series, tvdb_episode
 
