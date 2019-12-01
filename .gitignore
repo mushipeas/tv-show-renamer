@@ -3,7 +3,8 @@ env/*
 .config.json
 .vscode/*
 comments/*
-outputfile.*
+.outputfile.*
 .testapi.py
 .testmodule.py
 .testfile.txt
+*__pycache__/*

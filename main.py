@@ -29,8 +29,8 @@ MAKEWINSAFE = cfg['MAKEWINSAFE'] if 'MAKEWINSAFE' in cfg else True
 DRYRUN = cfg['DRYRUN'] if 'DRYRUN' in cfg else True 
 AUTODELETE = cfg['AUTODELETE'] if 'AUTODELETE' in cfg and not DRYRUN else False
 
-print('DRYRUN     : ' + str(DRYRUN))
-print('AUTODELETE : ' + str(AUTODELETE))
+print(' ------- DRYRUN     : ' + str(DRYRUN))
+print(' ------- AUTODELETE : ' + str(AUTODELETE))
 
 if APIKEY: rn = Renamer(OUTPUT_FORMAT_STRING=Defaults.OUTPUT_FORMAT_STRING,
             PATTERN=PATTERN,
@@ -63,8 +63,9 @@ def recursive_dir_scan(search_dir, file_output):
                 new_rel_path = rn.get_relative_pathname(orig_filename)
                 if new_rel_path:
                     new_abs_path = os.path.join(OUTPUT_DIR_ROOT, new_rel_path)
-                    file_output.append('         {:<60}   ->   {}\n'.format(orig_filename[:55],new_abs_path))
-                    print('         {:<60}   ->   {}'.format(orig_filename[:55],new_rel_path))
+                    log = '         {:<60}   ->   {}'.format(orig_filename[:55],new_rel_path)
+                    file_output.append(log+'\n')
+                    print(log)
                     if not DRYRUN:
                         ensure_dir(new_abs_path)
                         shutil.move(entry.path,new_abs_path)
@@ -87,6 +88,7 @@ def recursive_dir_scan(search_dir, file_output):
 
 file_output = []
 recursive_dir_scan(SEARCH_DIR, file_output)
+print(" ------- Finished Script")
 
 # text output
 with open('outputfile.txt', 'w+') as output_file:
