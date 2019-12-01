@@ -8,15 +8,15 @@ from .custom_objs import Cobjs
 
 class Renamer:
     def __init__(self,
-                OUTPUT_FORMAT_STRING,
+                FILE_NAME_TEMPLATE,
                 PATTERN,
                 APIKEY,
-                SEASON_DIR_FORMAT,
+                SEASON_DIR_TEMPLATE,
                 MAKEWINSAFE=False,
                 ):
         self.MAKEWINSAFE = MAKEWINSAFE
-        self.OUTPUT_FORMAT_STRING = OUTPUT_FORMAT_STRING
-        self.SEASON_DIR_FORMAT = SEASON_DIR_FORMAT
+        self.FILE_NAME_TEMPLATE = FILE_NAME_TEMPLATE
+        self.SEASON_DIR_TEMPLATE = SEASON_DIR_TEMPLATE
         
         self.prog = re.compile(PATTERN, re.IGNORECASE)
         self.t = tvdb_api.Tvdb(apikey=APIKEY)
@@ -88,7 +88,7 @@ class Renamer:
                                             tvdb_episode['airedEpisodeNumber'],
                                             tvdb_episode['episodeName'],
                                             extension,
-                                            self.OUTPUT_FORMAT_STRING
+                                            self.FILE_NAME_TEMPLATE
                                             )
         if self.MAKEWINSAFE:
             return self.make_winsafe(new_filename)
@@ -112,7 +112,7 @@ class Renamer:
             try:
                 bm_tvdb_series, tvdb_episode = self.get_ep_tvdb_info(regex_data)
                 show_dir = self.make_winsafe(bm_tvdb_series.data['seriesName'])
-                season_dir = self.SEASON_DIR_FORMAT.format(tvdb_episode['airedSeason'])
+                season_dir = self.SEASON_DIR_TEMPLATE.format(tvdb_episode['airedSeason'])
                 new_filename = self.get_new_filename(bm_tvdb_series, tvdb_episode, regex_data['extension'])
                 return os.path.join(show_dir,season_dir,new_filename)
             except:

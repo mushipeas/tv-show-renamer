@@ -47,7 +47,8 @@ This needs to be turned off by specifying `"DRYRUN" : false` in the config.
 
     {
         ...
-        "OUTPUT_FORMAT_STRING" :  (default = "{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}" ),
+        "FILE_NAME_TEMPLATE" : "{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}",
+        "SEASON_DIR_TEMPLATE" : "Season {0:02d}",
         "MAKEWINSAFE" :  (default = true),
         "AUTODELETE" :  (default = false),
         "DRYRUN" : (default = true)
@@ -55,7 +56,7 @@ This needs to be turned off by specifying `"DRYRUN" : false` in the config.
 
 If `"AUTODELETE"` is true, any file that is not matched for renaming will be deleted. Be careful with this! Additional functionality to only delete files with certain extensions needs to be added in the future. (Though it would be trivial if you wanted to modify the code)
 
-`"OUTPUT_FORMAT_STRING"` has the following keywords:
+`"FILE_NAME_TEMPLATE"` has the following keywords:
     
 -  `series_title` = The title of the series as given by TVDB
 -  `s_no` = Season number, as integer
@@ -66,10 +67,10 @@ If `"AUTODELETE"` is true, any file that is not matched for renaming will be del
 The string follows the Python String Format Spec. Mini Language, as given by:
 https://docs.python.org/3.4/library/string.html#formatspec
 
-Default `OUTPUT_FORMAT_STRING`:
-`"{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}"`
+Default  `"SEASON_DIR_TEMPLATE"` and `"FILE_NAME_TEMPLATE"`:
+`"Season {0:02d}"` and `"{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}"`
 Which gives:
-`Series Title - SXXEXX - Episode Title.ext`
+`OUTPUT_DIR_ROOT\Series Title\Season XX\Series Title - SXXEXX - Episode Title.ext`
 
 ### Running the script
 

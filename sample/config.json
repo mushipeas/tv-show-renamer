@@ -2,7 +2,8 @@
     "APIKEY" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "SEARCH_DIR" : "home/temp_dl_tv/",
     "OUTPUT_DIR_ROOT" : "media/TV Shows/",
-    "OUTPUT_FORMAT_STRING" : "{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}",
+    "FILE_NAME_TEMPLATE" : "{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}",
+    "SEASON_DIR_TEMPLATE" : "Season {0:02d}",
     "MAKEWINSAFE" : true,
     "AUTODELETE" : false,
     "DRYRUN" : true

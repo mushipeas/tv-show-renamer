@@ -18,13 +18,13 @@ __version__: str = '0.0.1'
 with open('config.json') as json_data_file:
     cfg = json.load(json_data_file)
 # necessary configs
+APIKEY = cfg['APIKEY'] if 'APIKEY' in cfg else None
 SEARCH_DIR = cfg['SEARCH_DIR']
 # optional configs
-APIKEY = cfg['APIKEY'] if 'APIKEY' in cfg else None
 OUTPUT_DIR_ROOT = cfg['OUTPUT_DIR_ROOT'] if 'OUTPUT_DIR_ROOT' in cfg else SEARCH_DIR
-OUTPUT_FORMAT_STRING = cfg['OUTPUT_FORMAT_STRING'] if 'OUTPUT_FORMAT_STRING' in cfg else Defaults.OUTPUT_FORMAT_STRING
+FILE_NAME_TEMPLATE = cfg['FILE_NAME_TEMPLATE'] if 'FILE_NAME_TEMPLATE' in cfg else Defaults.FILE_NAME_TEMPLATE
 PATTERN = cfg['PATTERN'] if 'PATTERN' in cfg else Defaults.PATTERN
-SEASON_DIR_FORMAT= cfg['SEASON_DIR_FORMAT'] if 'SEASON_DIR_FORMAT' in cfg else Defaults.SEASON_DIR_FORMAT
+SEASON_DIR_TEMPLATE= cfg['SEASON_DIR_TEMPLATE'] if 'SEASON_DIR_TEMPLATE' in cfg else Defaults.SEASON_DIR_TEMPLATE
 MAKEWINSAFE = cfg['MAKEWINSAFE'] if 'MAKEWINSAFE' in cfg else True
 DRYRUN = cfg['DRYRUN'] if 'DRYRUN' in cfg else True 
 AUTODELETE = cfg['AUTODELETE'] if 'AUTODELETE' in cfg and not DRYRUN else False
@@ -32,9 +32,9 @@ AUTODELETE = cfg['AUTODELETE'] if 'AUTODELETE' in cfg and not DRYRUN else False
 print(' ------- DRYRUN     : ' + str(DRYRUN))
 print(' ------- AUTODELETE : ' + str(AUTODELETE))
 
-if APIKEY: rn = Renamer(OUTPUT_FORMAT_STRING=Defaults.OUTPUT_FORMAT_STRING,
+if APIKEY: rn = Renamer(FILE_NAME_TEMPLATE=FILE_NAME_TEMPLATE,
             PATTERN=PATTERN,
-            SEASON_DIR_FORMAT=SEASON_DIR_FORMAT,
+            SEASON_DIR_TEMPLATE=SEASON_DIR_TEMPLATE,
             MAKEWINSAFE=MAKEWINSAFE,
             APIKEY=APIKEY)
 
@@ -91,6 +91,6 @@ recursive_dir_scan(SEARCH_DIR, file_output)
 print(" ------- Finished Script")
 
 # text output
-with open('outputfile.txt', 'w+') as output_file:
+with open('outputfile.txt', 'w+', encoding='utf-8') as output_file:
     for item in file_output:
         output_file.write(item)
