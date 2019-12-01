@@ -5,7 +5,6 @@ import difflib
 from functools import lru_cache
 from .custom_objs import Cobjs
 
-#  . └─ ├ ├ ├ ├   for tree struc
 
 class Renamer:
     def __init__(self,
