@@ -63,7 +63,7 @@ def recursive_dir_scan(search_dir, file_output):
                 new_rel_path = rn.get_relative_pathname(orig_filename)
                 if new_rel_path:
                     new_abs_path = os.path.join(OUTPUT_DIR_ROOT, new_rel_path)
-                    log = '         {:<60}   ->   {}'.format(orig_filename[:55],new_rel_path)
+                    log = '         {:<60}   ->   {}'.format(orig_filename[:60],new_rel_path)
                     file_output.append(log+'\n')
                     print(log)
                     if not DRYRUN:
@@ -91,6 +91,6 @@ recursive_dir_scan(SEARCH_DIR, file_output)
 print(" ------- Finished Script")
 
 # text output
-with open('outputfile.txt', 'w+', encoding='utf-8') as output_file:
+with open('outputfile.txt', 'w', encoding='utf-8') as output_file:
     for item in file_output:
         output_file.write(item)
