@@ -38,25 +38,6 @@ if APIKEY: rn = Renamer(OUTPUT_FORMAT_STRING=Defaults.OUTPUT_FORMAT_STRING,
             MAKEWINSAFE=MAKEWINSAFE,
             APIKEY=APIKEY)
 
-
-# test using testfile.txt
-def test(testfile):
-    file_output = []
-    with open(testfile, 'r') as test_file:
-        for line in test_file:
-            orig_filename = line[:-1]
-            try: new_filename = rn.get_relative_pathname(orig_filename)
-            except: print(Exception)
-            if new_filename:
-                log = '         {:<60}   ->   {}'.format(orig_filename[:55],os.path.basename(new_filename))
-                file_output.append(log+'\n')
-                print(log)
-            else:
-                log = '[x]      {:<60}   ->   Did not work.'.format(orig_filename[:55])
-                file_output.append(log+'\n')
-                print(log)
-    return file_output
-
 def ensure_dir(file_path):
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
@@ -107,9 +88,7 @@ def recursive_dir_scan(search_dir, file_output):
 file_output = []
 recursive_dir_scan(SEARCH_DIR, file_output)
 
-# output = test('testfile.txt')
-
-# test output
+# text output
 with open('outputfile.txt', 'w+') as output_file:
     for item in file_output:
         output_file.write(item)
