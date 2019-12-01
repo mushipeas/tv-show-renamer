@@ -4,5 +4,7 @@ env/*
 .vscode/*
 comments/*
 outputfile.*
-testapi.py
-testmodule.py
+.testapi.py
+.testmodule.py
+.testfile.txt
+.testmodule.py

@@ -20,6 +20,7 @@ with open('config.json') as json_data_file:
 # necessary configs
 SEARCH_DIR = cfg['SEARCH_DIR']
 # optional configs
+APIKEY = cfg['APIKEY'] if 'APIKEY' in cfg else None
 OUTPUT_DIR_ROOT = cfg['OUTPUT_DIR_ROOT'] if 'OUTPUT_DIR_ROOT' in cfg else SEARCH_DIR
 OUTPUT_FORMAT_STRING = cfg['OUTPUT_FORMAT_STRING'] if 'OUTPUT_FORMAT_STRING' in cfg else Defaults.OUTPUT_FORMAT_STRING
 PATTERN = cfg['PATTERN'] if 'PATTERN' in cfg else Defaults.PATTERN
@@ -31,10 +32,12 @@ AUTODELETE = cfg['AUTODELETE'] if 'AUTODELETE' in cfg and not DRYRUN else False
 print('DRYRUN     : ' + str(DRYRUN))
 print('AUTODELETE : ' + str(AUTODELETE))
 
-rn = Renamer(OUTPUT_FORMAT_STRING=Defaults.OUTPUT_FORMAT_STRING,
+if APIKEY: rn = Renamer(OUTPUT_FORMAT_STRING=Defaults.OUTPUT_FORMAT_STRING,
             PATTERN=PATTERN,
             SEASON_DIR_FORMAT=SEASON_DIR_FORMAT,
-            MAKEWINSAFE=MAKEWINSAFE)
+            MAKEWINSAFE=MAKEWINSAFE,
+            APIKEY=APIKEY)
+
 
 # test using testfile.txt
 def test(testfile):

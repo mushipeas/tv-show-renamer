@@ -10,15 +10,16 @@ class Renamer:
     def __init__(self,
                 OUTPUT_FORMAT_STRING,
                 PATTERN,
+                APIKEY,
                 SEASON_DIR_FORMAT,
-                MAKEWINSAFE=False
+                MAKEWINSAFE=False,
                 ):
         self.MAKEWINSAFE = MAKEWINSAFE
         self.OUTPUT_FORMAT_STRING = OUTPUT_FORMAT_STRING
         self.SEASON_DIR_FORMAT = SEASON_DIR_FORMAT
         
         self.prog = re.compile(PATTERN, re.IGNORECASE)
-        self.t = tvdb_api.Tvdb()
+        self.t = tvdb_api.Tvdb(apikey=APIKEY)
 
     def _get_regex_tv_info(self, video_filename: str):
         match = self.prog.match(video_filename)
