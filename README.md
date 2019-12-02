@@ -35,9 +35,8 @@ If the output directory `"OUTPUT_DIR_ROOT"` is not specified, it will default to
 `Config.json` minimum requirements:
 
     {
-        "APIKEY" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-        "SEARCH_DIR" : "home/temp_dl_tv/",
-        "OUTPUT_DIR_ROOT" : "media/TV Shows/"
+        "APIKEY" :              "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "SEARCH_DIR" :          "home/temp_dl_tv/"
     }
 
 See http://thetvdb.com/?tab=apiregister to get your own API key
@@ -48,11 +47,12 @@ This needs to be turned off by specifying `"DRYRUN" : false` in the config.
 
     {
         ...
-        "FILE_NAME_TEMPLATE" : "{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}",
+        "OUTPUT_DIR_ROOT" :     "media/TV Shows/",
+        "FILE_NAME_TEMPLATE" :  "{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}",
         "SEASON_DIR_TEMPLATE" : "Season {0:02d}",
-        "MAKEWINSAFE" :  (default = true),
-        "AUTODELETE" :  (default = false),
-        "DRYRUN" : (default = true)
+        "MAKEWINSAFE" :         (default = true),
+        "AUTODELETE" :          (default = false),
+        "DRYRUN" :              (default = true)
     }
 
 If `"AUTODELETE"` is true, any file that is not matched for renaming will be deleted. Be careful with this! Additional functionality to only delete files with certain extensions needs to be added in the future. (Though it would be trivial if you wanted to modify the code)
@@ -69,6 +69,7 @@ The string follows the Python String Format Spec. Mini Language, as given by:
 https://docs.python.org/3.4/library/string.html#formatspec
 
 Default  `"SEASON_DIR_TEMPLATE"` and `"FILE_NAME_TEMPLATE"`:
+
 `"Season {0:02d}"` and `"{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}"`
 
 Which gives:
