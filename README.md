@@ -4,8 +4,9 @@ A TV Show episode automatic-renamer designed around the tvdb_api python project.
 The script recursively scans a directory and uses tvdb_api to get the episode details for renaming for all supporting media files.
 Does a better job of finding the right show by default than most.
 
-tvdb.com: [http://thetvdb.com][tvdb]
-tvdb_api: [https://github.com/dbr/tvdb_api][tvdb_api Github]
+tvdb.com: http://thetvdb.com
+
+tvdb_api: https://github.com/dbr/tvdb_api
 
 Written for and tested on Python 3.7.5
 
