@@ -39,7 +39,7 @@ If the output directory `"OUTPUT_DIR_ROOT"` is not specified, it will default to
         "SEARCH_DIR" :          "home/temp_dl_tv/"
     }
 
-See http://thetvdb.com/?tab=apiregister to get your own API key
+See http://thetvdb.com/?tab=apiregister to get your own API key.
 By default the program will dry run and output proposed name changes.
 This needs to be turned off by specifying `"DRYRUN" : false` in the config.
 
