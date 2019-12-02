@@ -29,7 +29,9 @@ This should create a virtual environment
 
 ### Config.json:
 `config.json` must be placed in the root dir with `__main.py__` (and this README).
+
 The search directory `"SEARCH_DIR"` must be specified in the config.
+
 If the output directory `"OUTPUT_DIR_ROOT"` is not specified, it will default to the same as the search directory.
 
 `Config.json` minimum requirements:
@@ -40,7 +42,9 @@ If the output directory `"OUTPUT_DIR_ROOT"` is not specified, it will default to
     }
 
 See http://thetvdb.com/?tab=apiregister to get your own API key.
+
 By default the program will dry run and output proposed name changes.
+
 This needs to be turned off by specifying `"DRYRUN" : false` in the config.
 
 ### Optional Configs:
@@ -88,4 +92,5 @@ or
 ### Automation:
 
 The script can be run on a schedule using Task Scheduler (Win) or cronjobs (UNIX), as long as the config is set up correctly (see above).
+
 If using a virtual environment, it must be activated by the automation script first (and deactivated after).
