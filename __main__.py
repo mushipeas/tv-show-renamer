@@ -14,8 +14,10 @@ from renamer import Renamer, Defaults
 __name__: str = 'tv-show-renamer'
 __version__: str = '0.0.1'
 
+cfgfile = os.path.join(os.path.dirname(__file__),'config.json')
+
 # Get Config data
-with open('config.json') as json_data_file:
+with open(cfgfile) as json_data_file:
     cfg = json.load(json_data_file)
 # necessary configs
 APIKEY = cfg['APIKEY'] if 'APIKEY' in cfg else None
@@ -43,29 +45,24 @@ def ensure_dir(file_path):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def recursive_dir_scan(search_dir, file_output):
+def recursive_dir_rename(search_dir, file_output):
     with os.scandir(search_dir) as it:
         for entry in it:
             if entry.is_dir():
-                recursive_dir_scan(entry, file_output)
+                recursive_dir_rename(entry, file_output)
                 if AUTODELETE:
                     try:
                         os.rmdir(entry.path)
-                        log = '[x]      {:<60}   ->   Deleted.'.format(entry.name)
-                        file_output.append(log+'\n')
-                        print(log)
+                        file_status = 'Deleted.'
                     except:
-                        log = '[x]      {:<60}   ->   Could not delete.'.format(entry.name)
-                        file_output.append(log+'\n')
-                        print(log)
+                        file_status = 'Could not delete.'
+                    formatted_print(entry.name,file_status,file_output,'[x]')
             if entry.is_file():
                 orig_filename = entry.name
                 new_rel_path = rn.get_relative_pathname(orig_filename)
                 if new_rel_path:
                     new_abs_path = os.path.join(OUTPUT_DIR_ROOT, new_rel_path)
-                    log = '         {:<60}   ->   {}'.format(orig_filename[:60],new_rel_path)
-                    file_output.append(log+'\n')
-                    print(log)
+                    formatted_print(orig_filename, new_rel_path, file_output)
                     if not DRYRUN:
                         ensure_dir(new_abs_path)
                         shutil.move(entry.path,new_abs_path)
@@ -73,24 +70,30 @@ def recursive_dir_scan(search_dir, file_output):
                     if AUTODELETE:
                         try:
                             os.remove(entry.path)
-                            log = '[x]      {:<60}   ->   Deleted.'.format(entry.name)
-                            file_output.append(log+'\n')
-                            print(log)
-                        except: 
-                            log = '[x]      {:<60}   ->   Could not delete.'.format(entry.name)
-                            file_output.append(log+'\n')
-                            print(log)
+                            file_status = 'Deleted.'
+                        except:
+                            file_status = 'Could not delete.'
                     else:
-                        log = '[x]      {:<60}   ->   Unchanged.'.format(entry.name)
-                        file_output.append(log+'\n')
-                        print(log)
+                        file_status = 'Unchanged.'
+                    formatted_print(entry.name,file_status,file_output,'[x]')
     return file_output
 
-file_output = []
-recursive_dir_scan(SEARCH_DIR, file_output)
-print(" ------- Finished Script")
+def formatted_print(input_file,stat_or_out,file_output,marker=''):
+    log = '{m:<9}{input_f:<60}   ->   {stat_or_out}'.format(m=marker,input_f=input_file[:60],stat_or_out=stat_or_out)
+    file_output.append(log+'\n')
+    print(log)
 
 # text output
-with open('outputfile.txt', 'w', encoding='utf-8') as output_file:
-    for item in file_output:
-        output_file.write(item)
+def printOutput(file_output):
+    with open('outputfile.txt', 'w', encoding='utf-8') as output_file:
+        for item in file_output:
+            output_file.write(item)
+
+
+def main():
+    file_output = []
+    recursive_dir_rename(SEARCH_DIR, file_output)
+    printOutput(file_output)
+    print(" ------- Finished Script")
+
+main()
