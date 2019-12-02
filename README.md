@@ -28,7 +28,7 @@ This should create a virtual environment
 ## Useage
 
 ### Config.json:
-`config.json` must be placed in the root dir with `__main.py__` (and this README).
+`config.json` must be placed in the root dir with `__main__.py` (and this README).
 
 The search directory `"SEARCH_DIR"` must be specified in the config.
 
