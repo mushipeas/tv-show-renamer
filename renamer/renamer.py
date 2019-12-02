@@ -73,11 +73,15 @@ class Renamer:
         try:
             bm_tvdb_series = self._best_match_series(regex_data['show_title'], regex_data['show_year'])
         except:
-            print('Err      Show-name TVDB search returned zero results for "{}" parsed from file : {}'.format(regex_data['show_title'],regex_data['original_file_name']))
+            print('Err      Show-name TVDB search returned zero results for "{}" parsed from file: "{}"'.format(regex_data['show_title'],regex_data['original_file_name']))
         try:
             tvdb_episode = bm_tvdb_series[regex_data['season_no']][regex_data['episode_no']]
         except:
-            print('Err      Episode Data does not exist on TVDB for "{} S{}E{}" parsed from file : {}'.format(regex_data['show_title'],regex_data['season_no'],regex_data['episode_no'],regex_data['original_file_name']))
+            print('Err      Episode Data does not exist on TVDB for TVDB_id={} "{} S{:02d}E{:02d}" parsed from file: "{}"'.format(bm_tvdb_series['id'],
+                                                                                                                                regex_data['show_title'],
+                                                                                                                                regex_data['season_no'],
+                                                                                                                                regex_data['episode_no'],
+                                                                                                                                regex_data['original_file_name']))
         else:
             return bm_tvdb_series, tvdb_episode
         return None, None
