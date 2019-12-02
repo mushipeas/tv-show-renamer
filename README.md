@@ -81,7 +81,7 @@ Once the `config.json` is in place, simply run the script as its root directory:
 
     python3 tv-show-renamer
 
-    or 
+or 
 
     python3 __main__.py
 
