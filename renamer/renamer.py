@@ -70,10 +70,18 @@ class Renamer:
         return None
 
     def get_ep_tvdb_info(self, regex_data: dict) -> 'TVDB Show obj, Episode obj': 
-        bm_tvdb_series = self._best_match_series(regex_data['show_title'], regex_data['show_year'])
-        tvdb_episode = bm_tvdb_series[regex_data['season_no']][regex_data['episode_no']]
+        try:
+            bm_tvdb_series = self._best_match_series(regex_data['show_title'], regex_data['show_year'])
+        except:
+            print('Err      Show-name TVDB search returned zero results for "{}" parsed from file : {}'.format(regex_data['show_title'],regex_data['original_file_name']))
+        try:
+            tvdb_episode = bm_tvdb_series[regex_data['season_no']][regex_data['episode_no']]
+        except:
+            print('Err      Episode Data does not exist on TVDB for "{} S{}E{}" parsed from file : {}'.format(regex_data['show_title'],regex_data['season_no'],regex_data['episode_no'],regex_data['original_file_name']))
+        else:
+            return bm_tvdb_series, tvdb_episode
+        return None, None
 
-        return bm_tvdb_series, tvdb_episode
 
     def format_filename(self, series_title: str, s_no: int, ep_no: int, ep_name: str, ext: str, format_str: str):
         return format_str.format(series_title=series_title,
@@ -109,14 +117,13 @@ class Renamer:
     def get_relative_pathname(self, orig_filename: str):
         regex_data = self._get_regex_tv_info(orig_filename)
         if regex_data:
-            try:
-                bm_tvdb_series, tvdb_episode = self.get_ep_tvdb_info(regex_data)
+            bm_tvdb_series, tvdb_episode = self.get_ep_tvdb_info(regex_data)
+            if bm_tvdb_series and tvdb_episode:
                 show_dir = self.make_winsafe(bm_tvdb_series.data['seriesName'])
                 season_dir = self.SEASON_DIR_TEMPLATE.format(tvdb_episode['airedSeason'])
                 new_filename = self.get_new_filename(bm_tvdb_series, tvdb_episode, regex_data['extension'])
                 return os.path.join(show_dir,season_dir,new_filename)
-            except:
-                print('Err      Show-name TVDB search returned zero results for "{}" from : {}'.format(regex_data['show_title'],regex_data['original_file_name']))
+            else:
                 return None
         else:
             print('Err      Filename cannot be parsed for "{}"!'.format(orig_filename))
