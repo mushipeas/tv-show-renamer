@@ -76,12 +76,12 @@ Which gives:
 
 `OUTPUT_DIR_ROOT\Series Title\Season XX\Series Title - SXXEXX - Episode Title.ext`
 
-### Running the script
+### Running the script:
 
 Once the `config.json` is in place, simply run the script in its root directory:
 
     python3 tv-show-renamer
 
-### Automation
+### Automation:
 
 The script can be run on a schedule using Task Scheduler (Win) or cronjobs (UNIX), as long as the config is set up correctly (see above).
