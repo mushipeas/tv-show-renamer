@@ -27,7 +27,7 @@ This should create a virtual environment
 ## Useage
 
 ### Config.json:
-`config.json` must be placed in the root dir with `main.py`.
+`config.json` must be placed in the root dir with `__main.py__` (and this README).
 The search directory `"SEARCH_DIR"` must be specified in the config.
 If the output directory `"OUTPUT_DIR_ROOT"` is not specified, it will default to the same as the search directory.
 
@@ -76,8 +76,8 @@ Which gives:
 
 Once the `config.json` is in place, simply run the script in its root directory:
 
-    python3 main.py
+    python3 tv-show-renamer
 
 ### Automation
 
-The script can be run on a schedule using Task Scheduler (Win) or cronjobs (UNIX), as long as the config is set up correctly (see above). The root dir of the project must first be traversed to in any automated script ie. with the `cd` command before the script is called.
+The script can be run on a schedule using Task Scheduler (Win) or cronjobs (UNIX), as long as the config is set up correctly (see above).
