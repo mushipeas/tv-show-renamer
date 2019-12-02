@@ -1,10 +1,18 @@
-.venv/*
-env/*
-.config.json
-.vscode/*
-comments/*
-.outputfile.*
-.testapi.py
-.testmodule.py
-.testfile.txt
-*__pycache__/*
+# Environment files
+.vscode/
+.venv/
+env/
+
+
+# User files
+config.json
+outputfile.*
+testapi.py
+testmodule.py
+testfile.txt
+
+  
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
