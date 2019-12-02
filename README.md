@@ -73,6 +73,7 @@ Default  `"SEASON_DIR_TEMPLATE"` and `"FILE_NAME_TEMPLATE"`:
 `"Season {0:02d}"` and `"{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}"`
 
 Which gives:
+
 `OUTPUT_DIR_ROOT\Series Title\Season XX\Series Title - SXXEXX - Episode Title.ext`
 
 ### Running the script
