@@ -16,7 +16,6 @@ __version__: str = '0.0.1'
 
 cfgfile = os.path.join(os.path.dirname(__file__),'config.json')
 output_file = os.path.join(os.path.dirname(__file__),'outputfile.txt')
-ignore_list_file = os.path.join(os.path.dirname(__file__),'ignore_list.json')
 
 # Get Config data
 with open(cfgfile) as json_data_file:
@@ -26,12 +25,14 @@ APIKEY = cfg['APIKEY'] if 'APIKEY' in cfg else None
 SEARCH_DIR = cfg['SEARCH_DIR']
 # optional configs
 OUTPUT_DIR_ROOT = cfg['OUTPUT_DIR_ROOT'] if 'OUTPUT_DIR_ROOT' in cfg else SEARCH_DIR
-FILE_NAME_TEMPLATE = cfg['FILE_NAME_TEMPLATE'] if 'FILE_NAME_TEMPLATE' in cfg else Defaults.FILE_NAME_TEMPLATE
 PATTERN = cfg['PATTERN'] if 'PATTERN' in cfg else Defaults.PATTERN
+FILE_NAME_TEMPLATE = cfg['FILE_NAME_TEMPLATE'] if 'FILE_NAME_TEMPLATE' in cfg else Defaults.FILE_NAME_TEMPLATE
 SEASON_DIR_TEMPLATE= cfg['SEASON_DIR_TEMPLATE'] if 'SEASON_DIR_TEMPLATE' in cfg else Defaults.SEASON_DIR_TEMPLATE
 MAKEWINSAFE = cfg['MAKEWINSAFE'] if 'MAKEWINSAFE' in cfg else True
 DRYRUN = cfg['DRYRUN'] if 'DRYRUN' in cfg else True 
 AUTODELETE = cfg['AUTODELETE'] if 'AUTODELETE' in cfg and not DRYRUN else False
+
+ignore_list_file = os.path.join(SEARCH_DIR,'ignore_list.json')
 
 print(' ------- DRYRUN     : ' + str(DRYRUN))
 print(' ------- AUTODELETE : ' + str(AUTODELETE))
@@ -54,9 +55,9 @@ def generate_ignore_list(ignore_list_file):
             ignore_list = json.load(f)
         return ignore_list
     except FileNotFoundError:
-        return []
+        return ['ignore_list.json']
     except:
-        return [] # needs further breakdown
+        return ['ignore_list.json'] # needs further breakdown
 
 def recursive_dir_rename(search_dir: str, file_output: list, ignore_list: set):
     with os.scandir(search_dir) as it:

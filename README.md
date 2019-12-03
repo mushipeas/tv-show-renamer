@@ -49,6 +49,9 @@ By default the program will dry run and output proposed name changes.
 
 This needs to be turned off by specifying `"DRYRUN" : false` in the config.
 
+An `ignore_list.json` file is created and maintained in the search directory `SEARCH_DIR`. This is to prevent repeated calls
+to the api for failed files when the program is run in automation scripts.
+
 ### Optional Configs:
 
     {
