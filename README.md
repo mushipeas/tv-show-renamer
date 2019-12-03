@@ -20,7 +20,7 @@ This should create a virtual environment
 
 ### Activate the environment:
     .\.venv\Scripts\activate (Windows)
-    source env/bin/activate (UNIX)
+    source .venv/bin/activate (UNIX)
 
 ### Install required packages:
     pip install -r requirements.txt
