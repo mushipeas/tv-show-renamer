@@ -15,6 +15,8 @@ __name__: str = 'tv-show-renamer'
 __version__: str = '0.0.1'
 
 cfgfile = os.path.join(os.path.dirname(__file__),'config.json')
+output_file = os.path.join(os.path.dirname(__file__),'outputfile.txt')
+ignore_list_file = os.path.join(os.path.dirname(__file__),'ignore_list.json')
 
 # Get Config data
 with open(cfgfile) as json_data_file:
@@ -45,11 +47,21 @@ def ensure_dir(file_path):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def recursive_dir_rename(search_dir, file_output):
+def generate_ignore_list(ignore_list_file):
+    try:
+        with open(ignore_list_file, 'r', encoding='utf-8') as f:
+            ignore_list = json.load(f)
+        return ignore_list
+    except FileNotFoundError:
+        return ['dummyname']
+    except:
+        return ['dummyname'] # needs further breakdown
+
+def recursive_dir_rename(search_dir: str, file_output: list, ignore_list: set):
     with os.scandir(search_dir) as it:
         for entry in it:
             if entry.is_dir():
-                recursive_dir_rename(entry, file_output)
+                recursive_dir_rename(entry, file_output, ignore_list)
                 if AUTODELETE:
                     try:
                         os.rmdir(entry.path)
@@ -57,7 +69,8 @@ def recursive_dir_rename(search_dir, file_output):
                     except:
                         file_status = 'Could not delete.'
                     formatted_print(entry.name,file_status,file_output,'[x]')
-            if entry.is_file():
+            elif entry.is_file() and entry.name not in ignore_list:
+                ignore_list.append(entry.name)
                 orig_filename = entry.name
                 new_rel_path = rn.get_relative_pathname(orig_filename)
                 if new_rel_path:
@@ -76,6 +89,9 @@ def recursive_dir_rename(search_dir, file_output):
                     else:
                         file_status = 'Unchanged.'
                     formatted_print(entry.name,file_status,file_output,'[x]')
+            else:
+                file_status = 'Ignored. See ignore_list.'
+                formatted_print(entry.name,file_status,file_output,'[x]')
     return file_output
 
 def formatted_print(input_file,stat_or_out,file_output,marker=''):
@@ -84,16 +100,21 @@ def formatted_print(input_file,stat_or_out,file_output,marker=''):
     print(log)
 
 # text output
-def printOutput(file_output):
-    with open('outputfile.txt', 'w', encoding='utf-8') as output_file:
-        for item in file_output:
+def print_to_file(data, file):
+    with open(file, 'w', encoding='utf-8') as output_file:
+        for item in data:
             output_file.write(item)
 
+def json_dump_file(data, file):
+    with open(file, 'w', encoding='utf-8') as f:
+        json.dump(data, f)
 
 def main():
-    file_output = []
-    recursive_dir_rename(SEARCH_DIR, file_output)
-    printOutput(file_output)
+    verbose_output = []
+    ignore_list = generate_ignore_list(ignore_list_file)
+    recursive_dir_rename(SEARCH_DIR, verbose_output, ignore_list)
+    print_to_file(verbose_output, output_file)
+    json_dump_file(ignore_list, ignore_list_file)
     print(" ------- Finished Script")
 
 main()

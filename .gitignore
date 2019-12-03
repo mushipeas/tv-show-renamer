@@ -10,7 +10,7 @@ outputfile.*
 testapi.py
 testmodule.py
 testfile.txt
-
+ignore_list.json
   
 # Byte-compiled / optimized / DLL files
 __pycache__/
