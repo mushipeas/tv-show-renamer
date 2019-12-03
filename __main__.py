@@ -35,8 +35,9 @@ AUTODELETE = cfg['AUTODELETE'] if 'AUTODELETE' in cfg and not DRYRUN else False
 
 print(' ------- DRYRUN     : ' + str(DRYRUN))
 print(' ------- AUTODELETE : ' + str(AUTODELETE))
+print(' ------- APIKEY     : ' + str(APIKEY))
 
-if APIKEY: rn = Renamer(FILE_NAME_TEMPLATE=FILE_NAME_TEMPLATE,
+rn = Renamer(FILE_NAME_TEMPLATE=FILE_NAME_TEMPLATE,
             PATTERN=PATTERN,
             SEASON_DIR_TEMPLATE=SEASON_DIR_TEMPLATE,
             MAKEWINSAFE=MAKEWINSAFE,
@@ -53,9 +54,9 @@ def generate_ignore_list(ignore_list_file):
             ignore_list = json.load(f)
         return ignore_list
     except FileNotFoundError:
-        return ['dummyname']
+        return []
     except:
-        return ['dummyname'] # needs further breakdown
+        return [] # needs further breakdown
 
 def recursive_dir_rename(search_dir: str, file_output: list, ignore_list: set):
     with os.scandir(search_dir) as it:

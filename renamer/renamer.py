@@ -19,7 +19,11 @@ class Renamer:
         self.SEASON_DIR_TEMPLATE = SEASON_DIR_TEMPLATE
         
         self.prog = re.compile(PATTERN, re.IGNORECASE)
-        self.t = tvdb_api.Tvdb(apikey=APIKEY)
+        
+        if APIKEY:
+            self.t = tvdb_api.Tvdb(apikey=APIKEY)
+        else: 
+            self.t = tvdb_api.Tvdb()
 
     def _get_regex_tv_info(self, video_filename: str):
         match = self.prog.match(video_filename)

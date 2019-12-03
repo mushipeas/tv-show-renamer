@@ -43,6 +43,8 @@ If the output directory `"OUTPUT_DIR_ROOT"` is not specified, it will default to
 
 See http://thetvdb.com/?tab=apiregister to get your own API key.
 
+The program will work without the API Key for testing, but it's highly recommended you get one if you're using it long-term.
+
 By default the program will dry run and output proposed name changes.
 
 This needs to be turned off by specifying `"DRYRUN" : false` in the config.
