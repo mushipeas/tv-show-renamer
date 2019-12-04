@@ -4,16 +4,16 @@ import tvdb_api
 import difflib
 from functools import lru_cache
 from .custom_objs import Cobjs
-
+from .defaults import Defaults
 
 class Renamer:
     def __init__(self,
-                FILE_NAME_TEMPLATE,
-                PATTERN,
                 APIKEY,
-                SEASON_DIR_TEMPLATE,
-                MAKEWINSAFE=False,
-                ):
+                FILE_NAME_TEMPLATE=Defaults.FILE_NAME_TEMPLATE,
+                PATTERN=Defaults.PATTERN,
+                SEASON_DIR_TEMPLATE=Defaults.SEASON_DIR_TEMPLATE,
+                MAKEWINSAFE=True,
+                **_):
         self.MAKEWINSAFE = MAKEWINSAFE
         self.FILE_NAME_TEMPLATE = FILE_NAME_TEMPLATE
         self.SEASON_DIR_TEMPLATE = SEASON_DIR_TEMPLATE

@@ -25,10 +25,6 @@ APIKEY = cfg['APIKEY'] if 'APIKEY' in cfg else None
 SEARCH_DIR = cfg['SEARCH_DIR']
 # optional configs
 OUTPUT_DIR_ROOT = cfg['OUTPUT_DIR_ROOT'] if 'OUTPUT_DIR_ROOT' in cfg else SEARCH_DIR
-PATTERN = cfg['PATTERN'] if 'PATTERN' in cfg else Defaults.PATTERN
-FILE_NAME_TEMPLATE = cfg['FILE_NAME_TEMPLATE'] if 'FILE_NAME_TEMPLATE' in cfg else Defaults.FILE_NAME_TEMPLATE
-SEASON_DIR_TEMPLATE= cfg['SEASON_DIR_TEMPLATE'] if 'SEASON_DIR_TEMPLATE' in cfg else Defaults.SEASON_DIR_TEMPLATE
-MAKEWINSAFE = cfg['MAKEWINSAFE'] if 'MAKEWINSAFE' in cfg else True
 DRYRUN = cfg['DRYRUN'] if 'DRYRUN' in cfg else True 
 AUTODELETE = cfg['AUTODELETE'] if 'AUTODELETE' in cfg and not DRYRUN else False
 
@@ -38,11 +34,7 @@ print(' ------- DRYRUN     : ' + str(DRYRUN))
 print(' ------- AUTODELETE : ' + str(AUTODELETE))
 print(' ------- APIKEY     : ' + str(APIKEY))
 
-rn = Renamer(FILE_NAME_TEMPLATE=FILE_NAME_TEMPLATE,
-            PATTERN=PATTERN,
-            SEASON_DIR_TEMPLATE=SEASON_DIR_TEMPLATE,
-            MAKEWINSAFE=MAKEWINSAFE,
-            APIKEY=APIKEY)
+rn = Renamer(**cfg)
 
 def ensure_dir(file_path):
     directory = os.path.dirname(file_path)
