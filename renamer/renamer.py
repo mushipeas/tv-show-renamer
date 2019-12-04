@@ -14,9 +14,9 @@ class Renamer:
                 SEASON_DIR_TEMPLATE=Defaults.SEASON_DIR_TEMPLATE,
                 MAKEWINSAFE=True,
                 **_):
-        self.MAKEWINSAFE = MAKEWINSAFE
-        self.FILE_NAME_TEMPLATE = FILE_NAME_TEMPLATE
-        self.SEASON_DIR_TEMPLATE = SEASON_DIR_TEMPLATE
+        self.MAKEWINSAFE = bool(MAKEWINSAFE)
+        self.FILE_NAME_TEMPLATE = str(FILE_NAME_TEMPLATE)
+        self.SEASON_DIR_TEMPLATE = str(SEASON_DIR_TEMPLATE)
         
         self.prog = re.compile(PATTERN, re.IGNORECASE)
         
