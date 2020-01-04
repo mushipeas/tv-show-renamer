@@ -10,9 +10,11 @@ import shutil
 from pathlib import Path
 from renamer import Renamer, Defaults
 
+__name__: str = "tv-show-renamer"
+__version__: str = "0.0.1"
 
-cfgfile = os.path.join(os.path.dirname(__file__),"config.json")
-output_file = os.path.join(os.path.dirname(__file__),"outputfile.txt")
+cfgfile = os.path.join(os.path.dirname(__file__), "config.json")
+output_file = os.path.join(os.path.dirname(__file__), "outputfile.txt")
 
 # Get Config data
 with open(cfgfile) as json_data_file:
@@ -22,10 +24,10 @@ APIKEY = cfg["APIKEY"] if "APIKEY" in cfg else None
 SEARCH_DIR = cfg["SEARCH_DIR"]
 # optional configs
 OUTPUT_DIR_ROOT = cfg["OUTPUT_DIR_ROOT"] if "OUTPUT_DIR_ROOT" in cfg else SEARCH_DIR
-DRYRUN = cfg["DRYRUN"] if "DRYRUN" in cfg else True 
+DRYRUN = cfg["DRYRUN"] if "DRYRUN" in cfg else True
 AUTODELETE = cfg["AUTODELETE"] if "AUTODELETE" in cfg and not DRYRUN else False
 
-ignore_list_file = os.path.join(SEARCH_DIR,"ignore_list.json")
+ignore_list_file = os.path.join(SEARCH_DIR, "ignore_list.json")
 
 print(" ------- DRYRUN     : " + str(DRYRUN))
 print(" ------- AUTODELETE : " + str(AUTODELETE))
@@ -33,10 +35,12 @@ print(" ------- APIKEY     : " + str(APIKEY))
 
 rn = Renamer(**cfg)
 
+
 def ensure_dir(file_path):
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
         os.makedirs(directory)
+
 
 def generate_ignore_list(ignore_list_file):
     try:
@@ -46,7 +50,8 @@ def generate_ignore_list(ignore_list_file):
     except FileNotFoundError:
         return ["ignore_list.json"]
     except:
-        return ["ignore_list.json"] # needs further breakdown
+        return ["ignore_list.json"]  # needs further breakdown
+
 
 def recursive_dir_rename(search_dir: str, file_output: list, ignore_list: set):
     with os.scandir(search_dir) as it:
@@ -59,7 +64,7 @@ def recursive_dir_rename(search_dir: str, file_output: list, ignore_list: set):
                         file_status = "Deleted."
                     except:
                         file_status = "Could not delete."
-                    formatted_print(entry.name,file_status,file_output,"[x]")
+                    formatted_print(entry.name, file_status, file_output, "[x]")
             elif entry.is_file() and entry.name not in ignore_list:
                 ignore_list.append(entry.name)
                 orig_filename = entry.name
@@ -69,7 +74,7 @@ def recursive_dir_rename(search_dir: str, file_output: list, ignore_list: set):
                     formatted_print(orig_filename, new_rel_path, file_output)
                     if not DRYRUN:
                         ensure_dir(new_abs_path)
-                        shutil.move(entry.path,new_abs_path)
+                        shutil.move(entry.path, new_abs_path)
                 else:
                     if AUTODELETE:
                         try:
@@ -79,16 +84,20 @@ def recursive_dir_rename(search_dir: str, file_output: list, ignore_list: set):
                             file_status = "Could not delete."
                     else:
                         file_status = "Unchanged."
-                    formatted_print(entry.name,file_status,file_output,"[x]")
+                    formatted_print(entry.name, file_status, file_output, "[x]")
             else:
                 file_status = "Ignored. See ignore_list."
-                formatted_print(entry.name,file_status,file_output,"[x]")
+                formatted_print(entry.name, file_status, file_output, "[x]")
     return file_output
 
-def formatted_print(input_file,stat_or_out,file_output,marker=""):
-    log = "{m:<9}{input_f:<60}   ->   {stat_or_out}".format(m=marker, input_f=input_file[:60], stat_or_out=stat_or_out)
-    file_output.append(log+"\n")
+
+def formatted_print(input_file, stat_or_out, file_output, marker=""):
+    log = "{m:<9}{input_f:<60}   ->   {stat_or_out}".format(
+        m=marker, input_f=input_file[:60], stat_or_out=stat_or_out
+    )
+    file_output.append(log + "\n")
     print(log)
+
 
 # text output
 def print_to_file(data, file):
@@ -96,9 +105,11 @@ def print_to_file(data, file):
         for item in data:
             output_file.write(item)
 
+
 def json_dump_file(data, file):
     with open(file, "w", encoding="utf-8") as f:
         json.dump(data, f)
+
 
 def main():
     verbose_output = []
@@ -108,5 +119,5 @@ def main():
     json_dump_file(ignore_list, ignore_list_file)
     print(" ------- Finished Script")
 
-if __name__ == "__main__":
-    main()
+
+main()
