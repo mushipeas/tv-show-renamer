@@ -1,5 +1,4 @@
 import __main__
 
-# Pretty sure this isn't doing anything.
-if __name__ == "__main__":
-    __main__.main()
+__name__: str = "tv-show-renamer"
+__version__: str = "0.0.1"
