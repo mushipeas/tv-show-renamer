@@ -118,13 +118,13 @@ def main():
         files = [args.target_file]
     elif args.search_dir:
         all_subfolders, all_files = scan_dir(args.search_dir)
-        files = [file_ for file_ in tqdm(all_files)]# if file_ not in ignore_list]
+        files = [file_ for file_ in tqdm(all_files)]  # if file_ not in ignore_list]
 
     for file_ in tqdm(files):  # tqdm??
         file_info = guessit(file_)
         media_type = _det_type(file_info)
 
-        if media_type not in ["tvepisode", "tvepisode_sub"]: # not
+        if media_type not in ["tvepisode", "tvepisode_sub"]:  # not
             print("{:15}{}".format(media_type, file_))
         #     tvdb_info = t.tvdb_episode_info(file_info)
         #     if tvdb_info:
@@ -138,11 +138,11 @@ def main():
         #         # can't get tvdb info for file_
         #         ignore_list.append(file_)
         # elif media_type == "tvanime" or "tvanime_sub":
-            # to be implemented
-            # ignore_list.append(file_)
+        # to be implemented
+        # ignore_list.append(file_)
         # elif media_type == "movie" or "movie_sub":
-            # not implemented
-            # ignore_list.append(file_)
+        # not implemented
+        # ignore_list.append(file_)
         # elif media_type == "misc_video":
         #     if file_.size < args.min_video_size:
         #         if args.auto_delete:
