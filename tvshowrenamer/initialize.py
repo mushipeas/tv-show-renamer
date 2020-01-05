@@ -22,6 +22,10 @@ def init():
     )
 
     parser.add_argument(
+        "-f", "--target_file", help="File to rename.", type=str, default=None,
+    )
+
+    parser.add_argument(
         "-s",
         "--search_dir",
         help="""Directory to search for files to rename.
@@ -29,10 +33,6 @@ def init():
             """,
         type=str,
         default=None,
-    )
-
-    parser.add_argument(
-        "-f", "--target_file", help="File to rename.", type=str, default=None,
     )
 
     parser.add_argument(
@@ -119,7 +119,9 @@ def get_ignorelist(args):
     if args.search_dir:
         ignore_list_file = os.path.join(args.search_dir, "ignore_list.json")
     else:
-        ignore_list_file = os.path.join(here, "ignore_list.json")
+        ignore_list_file = os.path.join(
+            os.path.dirname(args.target_file), "ignore_list.json"
+        )
 
     try:
         ignore_list = generate_ignore_list(ignore_list_file)
