@@ -3,7 +3,7 @@ Contains all the versioning info for the package.
 Used by setup.py too.
 """
 
-__title__ = "mushipeas"
+__title__ = "tvshowrenamer"
 __version__ = "0.0.1"
 __description__ = "TV Show Episode Renamer, using the TVDB Api"
 __author__ = "mushipeas"

@@ -7,13 +7,15 @@ here = os.path.abspath(os.path.dirname(__file__))
 packages = ["tvshowrenamer"]
 
 about = {}
-with open(os.path.join(here, "tvshowrenamer", "__version__.py"), "r", "utf-8") as f:
+with open(
+    os.path.join(here, "tvshowrenamer", "__version__.py"), "r", encoding="utf-8"
+) as f:
     exec(f.read(), about)
 
-with open("README.md", "r", "utf-8") as f:
+with open("README.md", "r", encoding="utf-8") as f:
     readme = f.read()
 
-with open("requirements.txt", "r", "utf-8") as f:
+with open("requirements.txt", "r", encoding="utf-8") as f:
     requirements = f.read().strip().split("\n")
 
 setup(
