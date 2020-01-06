@@ -2,27 +2,34 @@ import argparse
 import configparser
 import json
 import os
+from pathlib import Path
 from .__version__ import __title__, __description__, __url__, __version__
 from .__version__ import __author__, __author_email__, __license__
 
 
-here = os.path.abspath(os.path.dirname(__file__))
+# here = os.path.abspath(os.path.dirname(__file__))
+default_ep_template = "{series_title} - S{s_no:02d}E{ep_no:02d} - {ep_name}.{ext}"
+default_sf_template = "Season {0:02d}"
 
 
 def init():
+    """Initialise the script by combining cmd-line and config args, and getting
+    the ignore_list.
+    """
     parser = argparse.ArgumentParser(description=__description__)
+
     parser.add_argument(
         "config",
         help="""Config.ini file, containing search and output directories,
-            API Key, and templates. Any arguments in the config override
-            the cmd-line arguments.
+            API Key, and templates. Arguments passed in the cmd-line
+            override config arguments.
             See README.md for full outline.
             """,
         type=str,
     )
 
     parser.add_argument(
-        "-f", "--target_file", help="File to rename.", type=str, default=None,
+        "-f", "--target_file", help="""File to rename. If this arg is provided, search_dir will be ignored""", type=str, default=None,
     )
 
     parser.add_argument(
@@ -63,7 +70,6 @@ def init():
         "--auto_delete",
         help="Deletes files which are not videos or subtitles.",
         type=bool,
-        default=False,
     )
 
     parser.add_argument(
@@ -73,13 +79,9 @@ def init():
             characters only. ie. "\\/<>|:*?"
             """,
         type=bool,
-        default=True,
     )
 
     args = parser.parse_args()
-
-    if args.search_dir:
-        args.target_file = None
 
     if args.dryrun:
         args.auto_delete = False
@@ -89,33 +91,47 @@ def init():
     except (ValueError, AttributeError, KeyError):
         raise  # Exception("Config file does not meet format requirements.")
     else:
-        get_ignorelist(args)
+        print("DRYRUN     : " + str(args.dryrun))
+        print("AUTODELETE : " + str(args.auto_delete))
+        append_ignorelist(args)
         return args
 
 
 def parse_config(args):
-    cfg = configparser.ConfigParser()
-    cfg.read(args.config)
+    # add config variables to args
+    _cfg = configparser.ConfigParser()
+    _cfg.read(args.config)
 
-    args.apikey = cfg["TVDB"]["APIKEY"]
+    cfg = _cfg["SETTINGS"]
+    
+    args.apikey = cfg.get("APIKEY", None)
 
-    if "DIRS" in cfg:
-        if "SEARCH_DIR" in cfg["DIRS"] and not args.target_file:
-            args.search_dir = os.path.dirname(cfg["DIRS"]["SEARCH_DIR"])
-        if "OUTPUT_DIR_ROOT" in cfg["DIRS"]:
-            args.output_dir = os.path.dirname(cfg["DIRS"]["OUTPUT_DIR_ROOT"])
-    args.templates = (
-        {
-            "episode": cfg["TEMPLATES"]["EPISODE"],
-            "season_folder": cfg["TEMPLATES"]["SEASON_FOLDER"],
-        },
-    )
-    args.auto_delete = cfg["SETTINGS"]["AUTO_DELETE"]
-    args.winsafe = cfg["SETTINGS"]["WINSAFE"]
+    if args.search_dir:
+        args.search_dir = Path(args.search_dir)
+    elif "SEARCH_DIR" in cfg:
+        args.search_dir = Path(cfg.get("SEARCH_DIR"))
+
+    if args.output_dir:
+        args.output_dir = Path(args.output_dir)
+    elif "OUTPUT_DIR_ROOT" in cfg:
+        args.output_dir = Path(cfg.get("OUTPUT_DIR_ROOT"))
+        
+    args.templates = {
+        "episode": cfg.get("EPISODE", default_ep_template),
+        "season_folder": cfg.get("SEASON_FOLDER", default_sf_template),
+    }
+
+    if not args.auto_delete:
+        args.auto_delete = cfg.getboolean("AUTO_DELETE", False)
+
+    if not args.winsafe:
+        args.winsafe = cfg.getboolean("WINSAFE", False)
+
     return None
 
 
-def get_ignorelist(args):
+def append_ignorelist(args):
+    # append [ignore_list] to args
     if args.search_dir:
         ignore_list_file = os.path.join(args.search_dir, "ignore_list.json")
     else:
@@ -126,30 +142,22 @@ def get_ignorelist(args):
     try:
         ignore_list = generate_ignore_list(ignore_list_file)
     except:
-        raise  # return empty list?
+        # log issue with ignore_list
+        raise
     else:
         args.ignore_list_file = ignore_list_file
         args.ignore_list = ignore_list
     return None
 
 
-def ensure_dir(file_path):
-    directory = os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-
 def generate_ignore_list(ignore_list_file):
+    # generate ignore_list, either from file or empty (if it doesn't exist)
     try:
         with open(ignore_list_file, "r", encoding="utf-8") as f:
             ignore_list = json.load(f)
         return ignore_list
     except FileNotFoundError:
+        # log new ignore_list generated
         return ["ignore_list.json"]
     except:
-        raise  # needs further breakdown
-
-
-def json_dump_file(data, file):
-    with open(file, "w", encoding="utf-8") as f:
-        json.dump(data, f)
+        raise
