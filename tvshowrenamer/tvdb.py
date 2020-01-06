@@ -11,7 +11,9 @@ class TVDB:
     """Handles all TVDB queries for the module"""
 
     def __init__(self, apikey=None):
-        self.t = tvdb_api.Tvdb(apikey=apikey, username=" ", userkey=" ")# if apikey else tvdb_api.Tvdb()
+        self.t = tvdb_api.Tvdb(
+            apikey=apikey, username=" ", userkey=" "
+        )  # if apikey else tvdb_api.Tvdb()
 
     def get_ep_tvdb_info(self, file_info: dict) -> "obj, obj":
         """Returns the series and episode info as two objects"""
@@ -38,7 +40,7 @@ class TVDB:
         return None, None
 
     @lru_cache(maxsize=128)
-    def search_series_name(self, show_title: str, year: str = " ") -> list:
+    def search_series_name(self, show_title: str, year: str = "") -> list:
         """Returns re-sorted list of series that match the query items.
         Items are sorted by closeness to search query.
         """

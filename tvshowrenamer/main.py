@@ -43,26 +43,24 @@ def main():
         if file_.media_type in ["tvepisode", "tvepisode_sub"]
     ]
 
-    unknown_files = [
-        file_
-        for file_ in assessed_files
-        if file_.media_type == "unknown"
-    ]
+    unknown_files = [file_ for file_ in assessed_files if file_.media_type == "unknown"]
 
-    print("Files found that match : {}/{}".format(len(tv_files), len(assessed_files)))
-    print("Files found to delete  : {}/{}".format(len(unknown_files), len(assessed_files)))
-    
+    print(
+        "Files found that match : {}/{}".format(len(tv_files), len(assessed_files))
+    )
+    print(
+        "Files found to delete  : {}/{}".format(len(unknown_files), len(assessed_files))
+    )
+
     tvdb = TVDB(args.apikey)
     rn = Renamer(
-        args.templates["episode"],
-        args.templates["season_folder"],
-        args.winsafe,
+        args.templates["episode"], args.templates["season_folder"], args.winsafe,
     )
 
     # tv_files = tqdm(tv_files, desc="Getting TVDB info    ", unit="files")
     for file_, file_info, _ in tv_files:
-        print(file_info)
         tvdb_series, tvdb_episode = tvdb.get_ep_tvdb_info(file_info)
+
         if tvdb_episode:
             if args.output_dir:
                 _new_filename = rn.get_relative_pathname(
@@ -76,23 +74,27 @@ def main():
                 new_filename = file_.with_name(_new_filename)
 
             if args.dryrun:
-                # log 
-                print("{old_fn:<40.40}  ->  {new_fn}".format(
-                    old_fn=file_.name, new_fn=new_filename
-                ))
+                # log
+                print(
+                    "{old_fn:<40.40}  ->  {new_fn}".format(
+                        old_fn=file_.name, new_fn=new_filename
+                    )
+                )
             else:
                 ensure_dir(new_filename.parent)
                 try:
                     shutil.move(file_, new_filename)
                 except FileNotFoundError:
                     # log input file does not exist
-                    print("{:<40.40}  ->  original file does not exist".format(
-                        file_.name
-                    ))
+                    print(
+                        "{:<40.40}  ->  original file does not exist".format(file_.name)
+                    )
                 else:
-                    print("{old_fn:<40.40}  ->  {new_fn}".format(
-                        old_fn=file_.name, new_fn=new_filename
-                    ))
+                    print(
+                        "{old_fn:<40.40}  ->  {new_fn}".format(
+                            old_fn=file_.name, new_fn=new_filename
+                        )
+                    )
                 pass
         else:
             print("no tvdb info")
@@ -107,9 +109,7 @@ def main():
                 # file cannot be deleted
                 raise
         else:
-            print("{:<40.40}  ->  file will be deleted".format(
-                file_.name
-            ))
+            print("{:<40.40}  ->  file will be deleted".format(file_.name))
 
     # folder clean-up
     for folder in subfolders:
@@ -118,8 +118,9 @@ def main():
         except OSError:
             # folder not empty
             pass
-        
+
     json_dump_file(args.ignore_list, args.ignore_list_file)
+
 
 # problem files:
 # misc_video    Mr. Robot - S01E01 - eps1.0_hellofriend.mov.mp4
@@ -130,5 +131,6 @@ def main():
 
 if __name__ == "__main__":
     import sys
+
     sys.argv = ["", "config.ini", "-f", "x:\temp\test_files\the.100.mkv", "-d", "True"]
     main()

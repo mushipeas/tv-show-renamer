@@ -29,7 +29,11 @@ def init():
     )
 
     parser.add_argument(
-        "-f", "--target_file", help="""File to rename. If this arg is provided, search_dir will be ignored""", type=str, default=None,
+        "-f",
+        "--target_file",
+        help="""File to rename. If this arg is provided, search_dir will be ignored""",
+        type=str,
+        default=None,
     )
 
     parser.add_argument(
@@ -103,7 +107,7 @@ def parse_config(args):
     _cfg.read(args.config)
 
     cfg = _cfg["SETTINGS"]
-    
+
     args.apikey = cfg.get("APIKEY", None)
 
     if args.search_dir:
@@ -115,7 +119,7 @@ def parse_config(args):
         args.output_dir = Path(args.output_dir)
     elif "OUTPUT_DIR_ROOT" in cfg:
         args.output_dir = Path(cfg.get("OUTPUT_DIR_ROOT"))
-        
+
     args.templates = {
         "episode": cfg.get("EPISODE", default_ep_template),
         "season_folder": cfg.get("SEASON_FOLDER", default_sf_template),

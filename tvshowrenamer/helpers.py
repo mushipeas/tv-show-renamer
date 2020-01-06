@@ -102,8 +102,11 @@ def _scan_dir(directory):
 
 
 def guess_file_info(file_):
-    """ Guess file info using guessit.
-    Returns MatchesDict([
+    """ Guess file info using regex query or guessit.
+    The regex is much much faster, but the guessit query
+    enables a better breakdown of filetype if not picked
+    up by the regex.
+    Returns Dict([
             ('title', 'Dexter'),
             ('season', 1),
             ('episode', 6),
@@ -114,13 +117,12 @@ def guess_file_info(file_):
             ('type', 'episode')
         ])
     """
-    # regex = get_regex_tv_info(file_.name)
-    # if regex:
-    #     return regex
-    # else:
-    #     # log regex didn't work - falling back to guessit
-    #     return guessit(file_.name)
-    return guessit(file_.name)
+    regex = get_regex_tv_info(file_.name)
+    if regex:
+        return regex
+    else:
+        # log regex didn't work - falling back to guessit
+        return guessit(file_.name)
 
 
 def _det_type(file_info):
@@ -150,21 +152,24 @@ def _det_type(file_info):
     return "unknown"
 
 
+valid_extensions = VIDEO_EXTENSIONS + SUBTITLE_EXTENSIONS
+_pattern = r"(^[\w\._\-\s&!\')(]+?)(?:[\._\-\s(]*?)(\d{4})*[)]*?(?:[\._\-\s]*?)[\[\._\-\ss](\d{1,2})[x\._\-\s]*[e|(ep)|x](\d{1,3})[^\d](?:.*)("
+pattern = _pattern + "|".join(valid_extensions) + "$)"
+PROG = re.compile(pattern, re.IGNORECASE)
+
 
 def get_regex_tv_info(video_filename: str):
-    pattern = r"(^[\w\._\-\s&!\')(]+?)(?:[\._\-\s(]*?)(\d{4})*[)]*?(?:[\._\-\s]*?)[\[\._\-\ss](\d{1,2})[x\._\-\s]*[e|(ep)|x](\d{1,3})[^\d](?:.*)(mp4|avi|mkv|m4v|webm|divx|idx|srt$)"
-    prog = re.compile(pattern, re.IGNORECASE)
-    match = prog.match(video_filename)
+    match = PROG.match(video_filename)
 
     output = (
         {
             "original_file_name": match.string,
-            "title": match.group(1).replace(".", " "),
+            "title": match.group(1),
             "year": match.group(2),
             "season": int(match.group(3)),
             "episode": int(match.group(4)),
             "container": match.string.split(".")[-1],
-            "type": "episode"
+            "type": "episode",
         }
         if match
         else {}

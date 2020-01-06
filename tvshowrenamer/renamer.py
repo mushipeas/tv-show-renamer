@@ -6,7 +6,7 @@ class Renamer:
     """Handles all renaming functionality of the module"""
 
     def __init__(self, episode_t, season_folder_t, winsafe):
-        self.episode_t =episode_t
+        self.episode_t = episode_t
         self.season_folder_t = season_folder_t
         self.winsafe = winsafe
 
@@ -40,7 +40,7 @@ class Renamer:
 
     def _format_filename(
         self, series_title: str, s_no: int, ep_no: int, ep_name: str, ext: str,
-    ):  
+    ):
         # generate filename using template
         return self.episode_t.format(
             series_title=series_title, s_no=s_no, ep_no=ep_no, ep_name=ep_name,
