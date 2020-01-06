@@ -93,10 +93,14 @@ def init():
     try:
         parse_config(args)
     except (ValueError, AttributeError, KeyError):
-        raise  # Exception("Config file does not meet format requirements.")
+        print("Config file does not meet format requirements. See README.md.")
+        exit()
     else:
         print("DRYRUN     : " + str(args.dryrun))
         print("AUTODELETE : " + str(args.auto_delete))
+        if not args.search_dir and not args.target_file:
+            print("No files to parse. Please set search_dir or target_file")
+            exit()
         append_ignorelist(args)
         return args
 

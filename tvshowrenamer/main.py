@@ -45,9 +45,7 @@ def main():
 
     unknown_files = [file_ for file_ in assessed_files if file_.media_type == "unknown"]
 
-    print(
-        "Files found that match : {}/{}".format(len(tv_files), len(assessed_files))
-    )
+    print("Files found that match : {}/{}".format(len(tv_files), len(assessed_files)))
     print(
         "Files found to delete  : {}/{}".format(len(unknown_files), len(assessed_files))
     )
@@ -97,8 +95,7 @@ def main():
                     )
                 pass
         else:
-            print("no tvdb info")
-            # can't get tvdb info for file_
+            # log: can't get tvdb info for file_
             args.ignore_list.append(file_.name)
 
     for file_, _, _ in unknown_files:
@@ -106,7 +103,7 @@ def main():
             try:
                 file_.unlink
             except:
-                # file cannot be deleted
+                # log: file cannot be deleted
                 raise
         else:
             print("{:<40.40}  ->  file will be deleted".format(file_.name))
