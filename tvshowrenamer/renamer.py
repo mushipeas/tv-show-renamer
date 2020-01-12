@@ -3,7 +3,7 @@ import re
 
 
 class Renamer:
-    """Handles all renaming functionality of the module"""
+    """Handles all renaming functionality of the module."""
 
     def __init__(self, episode_t, season_folder_t, winsafe):
         self.episode_t = episode_t
@@ -31,7 +31,7 @@ class Renamer:
         """Generates relative path for file with a folder structure matching
         the /SeriesName/SeasonNo/Episodes structure. The SeasonNo folder and 
         Episode filename are formatted according to the templates supplied to
-        init
+        init.
         """
         show_dir = self._make_winsafe(tvdb_series.data["seriesName"])
         season_dir = self.season_folder_t.format(tvdb_episode["airedSeason"])

@@ -2,9 +2,9 @@ import collections
 import json
 import os
 import re
-from tqdm import tqdm
 from guessit import guessit
 from pathlib import Path
+from tqdm import tqdm
 
 AssessedFile = collections.namedtuple("AssessedFile", "filePath info media_type")
 
@@ -50,7 +50,7 @@ VIDEO_EXTENSIONS = [
 
 
 def find_files(args):
-    # find files (not in ignore_list) to be parsed
+    """Find files (not in ignore_list) to be parsed."""
     ignore_list = args.ignore_list
 
     if args.target_file:
@@ -65,6 +65,9 @@ def find_files(args):
 
 
 def assess_media_types(files):
+    """Assess file "info" and "media type" for all files. Returns a list of:
+    AssessedFile(filePath=file_, info=info, media_type=media_type)
+    """
     assessed_files = []
     files = tqdm(files, desc="Assessing input files", unit="files")
     for file_ in files:
@@ -78,12 +81,14 @@ def assess_media_types(files):
 
 
 def ensure_dir(file_path):
+    """Checks if a directory exists. Creates it, if not."""
     directory = file_path.parent
     if not directory.exists():
         directory.mkdir
 
 
 def json_dump_file(data, file):
+    """Dumps json-able data to file."""
     with open(file, "w", encoding="utf-8") as f:
         json.dump(data, f)
 
@@ -105,7 +110,7 @@ def guess_file_info(file_):
     """ Guess file info using regex query or guessit.
     The regex is much much faster, but the guessit query
     enables a better breakdown of filetype if not picked
-    up by the regex.
+    up by the regex. eg.
     Returns Dict([
             ('title', 'Dexter'),
             ('season', 1),
@@ -117,7 +122,7 @@ def guess_file_info(file_):
             ('type', 'episode')
         ])
     """
-    regex = get_regex_tv_info(file_.name)
+    regex = _get_regex_tv_info(file_.name)
     if regex:
         return regex
     else:
@@ -158,7 +163,8 @@ pattern = _pattern + "|".join(valid_extensions) + "$)"
 PROG = re.compile(pattern, re.IGNORECASE)
 
 
-def get_regex_tv_info(video_filename: str):
+def _get_regex_tv_info(video_filename: str):
+    # Attempts to guess basic episode info based on filename, using regex.
     match = PROG.match(video_filename)
 
     output = (

@@ -1,6 +1,6 @@
+import collections
 import difflib
 from functools import lru_cache
-import collections
 import tvdb_api
 
 
@@ -8,15 +8,13 @@ SearchResult = collections.namedtuple("SearchResult", "show_title id search_diff
 
 
 class TVDB:
-    """Handles all TVDB queries for the module"""
+    """Handles all TVDB queries for the module."""
 
     def __init__(self, apikey=None):
-        self.t = tvdb_api.Tvdb(
-            apikey=apikey, username=" ", userkey=" "
-        )  # if apikey else tvdb_api.Tvdb()
+        self.t = tvdb_api.Tvdb(apikey=apikey, username=" ", userkey=" ")
 
     def get_ep_tvdb_info(self, file_info: dict) -> "obj, obj":
-        """Returns the series and episode info as two objects"""
+        """Returns the series and episode info as two objects."""
         year = file_info["year"] if "year" in file_info else " "
         tvdb_series_gen = self._best_match_series(file_info["title"], year)
         while 1:

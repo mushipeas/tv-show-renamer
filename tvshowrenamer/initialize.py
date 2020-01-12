@@ -91,7 +91,7 @@ def init():
         args.auto_delete = False
 
     try:
-        parse_config(args)
+        _parse_config(args)
     except (ValueError, AttributeError, KeyError):
         print("Config file does not meet format requirements. See README.md.")
         exit()
@@ -101,11 +101,11 @@ def init():
         if not args.search_dir and not args.target_file:
             print("No files to parse. Please set search_dir or target_file")
             exit()
-        append_ignorelist(args)
+        _append_ignorelist(args)
         return args
 
 
-def parse_config(args):
+def _parse_config(args):
     # add config variables to args
     _cfg = configparser.ConfigParser()
     _cfg.read(args.config)
@@ -138,7 +138,7 @@ def parse_config(args):
     return None
 
 
-def append_ignorelist(args):
+def _append_ignorelist(args):
     # append [ignore_list] to args
     if args.search_dir:
         ignore_list_file = os.path.join(args.search_dir, "ignore_list.json")
@@ -148,7 +148,7 @@ def append_ignorelist(args):
         )
 
     try:
-        ignore_list = generate_ignore_list(ignore_list_file)
+        ignore_list = _generate_ignore_list(ignore_list_file)
     except:
         # log issue with ignore_list
         raise
@@ -158,7 +158,7 @@ def append_ignorelist(args):
     return None
 
 
-def generate_ignore_list(ignore_list_file):
+def _generate_ignore_list(ignore_list_file):
     # generate ignore_list, either from file or empty (if it doesn't exist)
     try:
         with open(ignore_list_file, "r", encoding="utf-8") as f:

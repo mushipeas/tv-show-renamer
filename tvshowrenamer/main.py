@@ -10,17 +10,6 @@ from .renamer import Renamer
 from .helpers import _det_type, guess_file_info, assess_media_types
 from .helpers import _scan_dir, find_files, ensure_dir, json_dump_file
 
-# should get apikey,
-#            search_dir OR
-#            target_file,
-#            output_dir,
-#            templates[dict: episode,season_folder],
-#            dryrun,
-#            log_level,
-#            auto_delete
-#            excluded_ext
-#            min_video_size
-
 
 def logger_setup(log_level):
     # sets up logger in main module
@@ -118,13 +107,6 @@ def main():
 
     json_dump_file(args.ignore_list, args.ignore_list_file)
 
-
-# problem files:
-# misc_video    Mr. Robot - S01E01 - eps1.0_hellofriend.mov.mp4
-# misc_video    Mr. Robot - S01E02 - eps1.1_ones-and-zer0es.mpeg.mp4
-# misc_video    Mr. Robot - S01E03 - eps1.2_d3bug.mkv.mp4
-# misc_video    Mr. Robot - S01E05 - eps1.4_3xpl0its.wmv.mp4
-# misc_video    Mr. Robot - S01E06 - eps1.5_br4ve-trave1er.asf.mp4
 
 if __name__ == "__main__":
     import sys
