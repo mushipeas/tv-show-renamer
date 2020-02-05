@@ -30,19 +30,19 @@ In the root dir of project, run:
 
 ### Running the program:
     usage: tvshowrenamer [-h] [-f TARGET_FILE] [-s SEARCH_DIR] [-o OUTPUT_DIR]
-                        [-d DRYRUN] [-l LOG_LEVEL] [-a AUTO_DELETE] [-ws WINSAFE]
-                        config
+                         [-l LOG_LEVEL] [-d] [-a] [-ws]
+                         config
 
     TV Show Episode Renamer, using the TVDB Api
 
     positional arguments:
-    config                Config.ini file, containing search and output
+    config                  Config.ini file, containing search and output
                             directories, API Key, and templates. Arguments passed
                             in the cmd-line override config arguments. See
                             README.md for full outline.
 
     optional arguments:
-    -h, --help            show this help message and exit
+    -h, --help              show this help message and exit
     -f TARGET_FILE, --target_file TARGET_FILE
                             File to rename. If this arg is provided, search_dir
                             will be ignored
@@ -53,15 +53,12 @@ In the root dir of project, run:
                             The root TV Show directory to move the file to when
                             renamed. If configured, the folder structure will be
                             built according to the templates in the config file.
-    -d DRYRUN, --dryrun DRYRUN
-                            Outputs suggested filename changes without
-                            implementing.
     -l LOG_LEVEL, --log_level LOG_LEVEL
                             Log level for debug.
-    -a AUTO_DELETE, --auto_delete AUTO_DELETE
-                            Deletes files which are not videos or subtitles.
-    -ws WINSAFE, --winsafe WINSAFE
-                            Ensures files are renamed with windows-safe characters
+    -d, --dryrun            Outputs suggested filename changes without
+                            implementing.
+    -a, --auto_delete       Deletes files which are not videos or subtitles.
+    -ws, --winsafe          Ensures files are renamed with windows-safe characters
                             only. ie. "\/<>|:*?"
 
 ### Config.json:

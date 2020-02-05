@@ -58,22 +58,21 @@ def init():
     )
 
     parser.add_argument(
-        "-d",
-        "--dryrun",
-        help="Outputs suggested filename changes without implementing.",
-        type=bool,
-        default=False,
+        "-l", "--log_level", help="Log level for debug.", type=int, default=0,
     )
 
     parser.add_argument(
-        "-l", "--log_level", help="Log level for debug.", type=int, default=0,
+        "-d",
+        "--dryrun",
+        help="Outputs suggested filename changes without implementing.",
+        action="store_true",
     )
 
     parser.add_argument(
         "-a",
         "--auto_delete",
         help="Deletes files which are not videos or subtitles.",
-        type=bool,
+        action="store_true",
     )
 
     parser.add_argument(
@@ -82,7 +81,7 @@ def init():
         help="""Ensures files are renamed with windows-safe
             characters only. ie. "\\/<>|:*?"
             """,
-        type=bool,
+        action="store_true",
     )
 
     args = parser.parse_args()
@@ -129,7 +128,7 @@ def _parse_config(args):
         "season_folder": cfg.get("SEASON_FOLDER", default_sf_template),
     }
 
-    if not args.auto_delete:
+    if not args.auto_delete or not args.dryrun:
         args.auto_delete = cfg.getboolean("AUTO_DELETE", False)
 
     if not args.winsafe:
