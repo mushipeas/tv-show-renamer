@@ -115,8 +115,8 @@ Once the `config.ini` is set up, simply run the script as its root directory:
 or with cmd-line arguments, such as:
 
     tvshowrenamer [-h] [-f TARGET_FILE] [-s SEARCH_DIR] [-o OUTPUT_DIR]
-                    [-d DRYRUN] [-l LOG_LEVEL] [-a AUTO_DELETE] [-ws WINSAFE]
-                    "path/to/config.ini"
+                  [-l LOG_LEVEL] [-d] [-a] [-ws]
+                  "path/to/config.ini"
 
 ### Automation:
 
