@@ -1,6 +1,6 @@
 # `tv-show-renamer`
 
-## NOTE: DEPRECIATED >> This uses an old version  of the TVDB API, and therefore no longer functions.
+## NOTE: DEPRECIATED >> This uses an old version  of the TVDB API, which no longer functions.
 
 A TV Show episode automatic-renamer designed around the tvdb_api python project.
 The script recursively scans a directory and uses tvdb_api to get the episode details for renaming for all supporting media files.
